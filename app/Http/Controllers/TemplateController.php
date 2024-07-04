@@ -55,4 +55,16 @@ class TemplateController extends Controller
 
         return redirect()->back()->with('error', 'File template tidak ditemukan.');
     }
+
+    public function importUidsap()
+    {
+        $filePath = 'public/templates/template_import_uidsap.xlsx';
+        $fileName = 'template_import_uidsap.xlsx';
+
+        if (Storage::exists($filePath)) {
+            return Storage::download($filePath, $fileName);
+        }
+
+        return redirect()->back()->with('error', 'File template tidak ditemukan.');
+    }
 }

@@ -7,7 +7,7 @@ use PHPMailer\PHPMailer\Exception;
 
 class EmailHelper
 {
-    public static function sendEmail($to, $cc, $subject, $body, $toName, $ccName, $fromName, $from = 'admin@ketik-kan.com')
+    public static function sendEmail($to, $cc, $subject, $body, $toName, $ccName, $fromName, $from = 'admin@ketikkan.com')
     {
         $mail = new PHPMailer(true);
 
@@ -15,9 +15,9 @@ class EmailHelper
             // Konfigurasi server
             $mail->SMTPDebug = 0;  //nonaktifkan debug -- tambahkan ini
             $mail->isSMTP();
-            $mail->Host = 'ketik-kan.com'; // Ganti dengan SMTP server Anda
+            $mail->Host = 'ketikkan.com'; // Ganti dengan SMTP server Anda
             $mail->SMTPAuth = true;
-            $mail->Username = 'admin@ketik-kan.com'; // Ganti dengan SMTP username Anda
+            $mail->Username = 'admin@ketikkan.com'; // Ganti dengan SMTP username Anda
             $mail->Password = 'S@msungj256'; // Ganti dengan SMTP password Anda
             // $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->SMTPSecure = 'ssl';

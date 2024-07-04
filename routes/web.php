@@ -45,8 +45,12 @@ Route::get(
     [TemplateController::class, 'importAssets']
 )->name('import-assets');
 
+Route::get(
+    '/import-uidsap',
+    [TemplateController::class, 'importUidsap']
+)->name('import-uidsap');
+
 
 Route::get('/', function () {
     return redirect()->route('filament.admin.auth.login');
 });
-

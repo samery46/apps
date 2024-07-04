@@ -78,10 +78,8 @@ class PinjamResource extends Resource
                             ->default(Auth::id()),
                         Forms\Components\Toggle::make('is_complete')
                             ->default(false)
-                            ->required()
-                            ->hiddenOn('create'),
+                            ->required(),
                     ])->columns(2),
-
                 Forms\Components\Section::make('Perangkat yang dipinjam')->schema([
                     self::getItemsRepeater(),
                 ]),
@@ -175,7 +173,6 @@ class PinjamResource extends Resource
             ->schema([
                 Forms\Components\Select::make('perangkat_id')
                     ->label('Perangkat')
-                    // ->options(Perangkat::query()->where('is_aktif', 1)->pluck('nama', 'id'))
                     ->options(function () {
                         return Perangkat::where('is_aktif', true)
                             ->get()
@@ -185,15 +182,15 @@ class PinjamResource extends Resource
                     })
                     ->required()
                     ->reactive()
-                    ->afterStateHydrated(function (Forms\Set $set, Forms\Get $get, $state) {
-                        $perangkat = Perangkat::find($state);
-                        $set('serial_number', $perangkat?->serial_number ?? 0);
-                    })
-                    ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get) {
-                        $perangkat = Perangkat::find($state);
-                        $set('serial_number', $perangkat?->serial_number ?? 0);
-                        $serial_number = $get('serial_number');
-                    })
+                    // ->afterStateHydrated(function (Forms\Set $set, Forms\Get $get, $state) {
+                    //     $perangkat = Perangkat::find($state);
+                    //     $set('serial_number', $perangkat?->serial_number ?? 0);
+                    // })
+                    // ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get) {
+                    //     $perangkat = Perangkat::find($state);
+                    //     $set('serial_number', $perangkat?->serial_number ?? 0);
+                    //     $serial_number = $get('serial_number');
+                    // })
 
                     ->distinct()
                     ->disableOptionsWhenSelectedInSiblingRepeaterItems()

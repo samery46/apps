@@ -46,67 +46,71 @@ class Pinjam extends Model
     protected static function booted()
     {
         static::created(function ($record) {
-            $karyawanEmail = $record->karyawan->email ?? '-';
-            $emailcc = $record->user->email ?? '-';
-            $userName = $record->user->name ?? '-';
             $karyawanName = $record->karyawan->nama ?? '-';
+            $karyawanEmail = $record->karyawan->email ?? '-';
             $karyawanJob = $record->karyawan->job_title ?? '-';
-
+            $userName = $record->user->name ?? '-';
+            $emailcc = $record->user->email ?? '-';
             $tglPinjam = DateHelper::formatIndonesianDate($record->tgl_pinjam);
-            $tglBuat = DateHelper::formatIndonesianDate($record->created_at);
-
+            $tglCreate = DateHelper::formatIndonesianDate($record->created_at);
 
             $items = $record->items;
-            $itemDetails = [];
+            $itemDetailsRows = '';
+
+            $nomor = 1;
 
             foreach ($items as $item) {
-                $perangkatNama = $item->perangkat->nama ?? '-';
-                $serialNumber = $item->perangkat->serial_number ?? '-';
-                $itemDetails[] = "{$perangkatNama} - {$serialNumber}";
+                $perangkatNama = $item->perangkat->nama ?? '';
+                $serialNumber = $item->perangkat->serial_number ?? '';
+                $itemDetailsRows .= "
+                <tr>
+                <td width=8%></td>
+                <td width=2%></td>
+                <td><b>{$nomor}. {$perangkatNama} {$serialNumber}</b></td>
+                </tr>";
+                $nomor++;
             }
-            $itemDetailsStr = implode(', ', $itemDetails);
 
-
-            $to = $karyawanEmail; //$karyawanEmail
-            $cc = $emailcc; //$emailcc
-            $ccName = $userName;
-            $fromName = $userName;
+            $to = $karyawanEmail; // Ganti dengan email penerima
             $toName = $karyawanName;
-            $subject = 'Info Peminjaman Perangkat';
+            $fromName = $userName;
+            $cc = $emailcc;
+            $ccName = $userName;
+            $subject = 'Peminjaman Perangkat';
+
             $body = "
-            Dear Bpk/Ibu/Sdr/i
-            <br>
-            <b>{$karyawanName}</b>,<br>
-            Job Title : <b>{$karyawanJob}</b><br>
-            <br>
-            Berikut data Perangkat yang Anda pinjam :
-            <br>
-            <br>
+            <p>Dear Bpk/Ibu/Sdr/i :</p>
+            <p><b>{$karyawanName}</b></p>
+            <p>Job Title: <b>{$karyawanJob}</b></p>
+            <p>Berikut adalah data peminjaman perangkat Anda:</p>
             <table>
             <tbody>
+
                 <tr>
                     <td width=8%>Nama Perangkat - Serial Number</td>
                     <td width=2%>:</td>
-                    <td width=25%>{$itemDetailsStr}</td>
                 </tr>
+                {$itemDetailsRows}
                 <tr>
-                    <td width=8%>Tgl Pinjam</td>
+                    <td width=8%>Tanggal Pinjam</td>
                     <td width=2%>:</td>
                     <td width=25%>{$tglPinjam}</td>
                 </tr>
             </tbody>
             </table>
             <br>
-            Mohon untuk segera di kembalikan perangkat tsb, jika sudah selesai digunakan.
-            <br><br>
-            Terimakasih,
-            <br><br>
-            <b>Penyerah</b><br>
-            <br><br>
+            <p>Mohon untuk segera di kembalikan perangkat tsb, jika sudah selesai digunakan.</p>
+            <br>Terimakasih.
+            <br>
+            <b>Penyerah</b>
+            <br>
+            <br>
+            <br>
             <u><b>{$userName}</b></u><br>
-            Dibuat : <i>{$tglBuat}</i><br>
+            Update : <i>{$tglCreate}</i><br>
             ";
 
+            // EmailHelper::sendEmail($to, $subject, $body);
             EmailHelper::sendEmail($to, $cc, $subject, $body, $toName, $ccName, $fromName);
         });
 
@@ -118,20 +122,24 @@ class Pinjam extends Model
             $userName = $record->user->name ?? '-';
             $emailcc = $record->user->email ?? '-';
             $tglPinjam = DateHelper::formatIndonesianDate($record->tgl_pinjam);
-            $tglKembali = DateHelper::formatIndonesianDate($record->tgl_kembali);
+            $tglKembali = $record->tgl_kembali ? DateHelper::formatIndonesianDate($record->tgl_kembali) : '';
             $tglUpdate = DateHelper::formatIndonesianDate($record->updated_at);
 
             $items = $record->items;
             $itemDetailsRows = '';
 
+            $nomor = 1;
+
             foreach ($items as $item) {
-                $perangkatNama = $item->perangkat->nama ?? '-';
-                $serialNumber = $item->perangkat->serial_number ?? '-';
+                $perangkatNama = $item->perangkat->nama ?? '';
+                $serialNumber = $item->perangkat->serial_number ?? '';
                 $itemDetailsRows .= "
-                    <tr>
-                        <td width=25%>{$perangkatNama} {$serialNumber}</td>
-                    </tr>
-                ";
+                <tr>
+                <td width=8%></td>
+                <td width=2%></td>
+                <td><b>{$nomor}. {$perangkatNama} {$serialNumber}</b></td>
+                </tr>";
+                $nomor++;
             }
 
             $to = $karyawanEmail; // Ganti dengan email penerima
@@ -142,18 +150,20 @@ class Pinjam extends Model
             $subject = 'Pengembalian Perangkat';
 
             $body = "
-            <p>Dear Bpk/Ibu/Sdr/i <b>{$karyawanName}</b>,</p>
+            <p>Dear Bpk/Ibu/Sdr/i :</p>
+            <p><b>{$karyawanName}</b></p>
             <p>Job Title: <b>{$karyawanJob}</b></p>
             <p>Berikut adalah data peminjaman perangkat Anda:</p>
             <table>
             <tbody>
+
                 <tr>
-                    <td width=8%><b>Nama Perangkat - Serial Number</b></td>
+                    <td width=8%>Nama Perangkat - Serial Number</td>
                     <td width=2%>:</td>
                 </tr>
-                    {$itemDetailsRows}
+                {$itemDetailsRows}
                 <tr>
-                    <td width=8%><b>Tanggal Pinjam | Tanggal Kembali</b></td>
+                    <td width=8%>Tanggal Pinjam | Tanggal Kembali</td>
                     <td width=2%>:</td>
                     <td width=25%>{$tglPinjam} | {$tglKembali}</td>
                 </tr>
@@ -179,3 +189,70 @@ class Pinjam extends Model
         });
     }
 }
+
+
+
+// static::created(function ($record) {
+//     $karyawanEmail = $record->karyawan->email ?? '-';
+//     $emailcc = $record->user->email ?? '-';
+//     $userName = $record->user->name ?? '-';
+//     $karyawanName = $record->karyawan->nama ?? '-';
+//     $karyawanJob = $record->karyawan->job_title ?? '-';
+
+//     $tglPinjam = DateHelper::formatIndonesianDate($record->tgl_pinjam);
+//     $tglBuat = DateHelper::formatIndonesianDate($record->created_at);
+
+
+//     $items = $record->items;
+//     $itemDetails = [];
+
+//     foreach ($items as $item) {
+//         $perangkatNama = $item->perangkat->nama ?? '-';
+//         $serialNumber = $item->perangkat->serial_number ?? '-';
+//         $itemDetails[] = "{$perangkatNama} - {$serialNumber}";
+//     }
+//     $itemDetailsStr = implode(', ', $itemDetails);
+
+
+//     $to = $karyawanEmail; //$karyawanEmail
+//     $cc = $emailcc; //$emailcc
+//     $ccName = $userName;
+//     $fromName = $userName;
+//     $toName = $karyawanName;
+//     $subject = 'Info Peminjaman Perangkat';
+//     $body = "
+//     Dear Bpk/Ibu/Sdr/i
+//     <br>
+//     <b>{$karyawanName}</b>,<br>
+//     Job Title : <b>{$karyawanJob}</b><br>
+//     <br>
+//     Berikut data Perangkat yang Anda pinjam :
+//     <br>
+//     <br>
+//     <table>
+//     <tbody>
+//         <tr>
+//             <td width=8%>Nama Perangkat - Serial Number</td>
+//             <td width=2%>:</td>
+//             <td width=25%>{$itemDetailsStr}</td>
+//         </tr>
+//         <tr>
+//             <td width=8%>Tgl Pinjam</td>
+//             <td width=2%>:</td>
+//             <td width=25%>{$tglPinjam}</td>
+//         </tr>
+//     </tbody>
+//     </table>
+//     <br>
+//     Mohon untuk segera di kembalikan perangkat tsb, jika sudah selesai digunakan.
+//     <br><br>
+//     Terimakasih,
+//     <br><br>
+//     <b>Penyerah</b><br>
+//     <br><br>
+//     <u><b>{$userName}</b></u><br>
+//     Dibuat : <i>{$tglBuat}</i><br>
+//     ";
+
+//     EmailHelper::sendEmail($to, $cc, $subject, $body, $toName, $ccName, $fromName);
+// });
