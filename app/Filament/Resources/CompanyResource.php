@@ -26,7 +26,6 @@ class CompanyResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    // protected static ?string $navigationGroup = 'Plant';
     protected static ?string $cluster = Plants::class;
 
     protected static ?int $navigationSort = 100;

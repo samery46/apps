@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Clusters\Pinjams;
+use App\Filament\Clusters\Transaksi;
 use App\Filament\Resources\PinjamResource\Pages;
 use App\Filament\Resources\PinjamResource\RelationManagers;
 use App\Models\Karyawan;
@@ -29,9 +29,7 @@ class PinjamResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    // protected static ?string $navigationGroup = 'Pinjam';
-
-    protected static ?string $cluster = Pinjams::class;
+    protected static ?string $cluster = Transaksi::class;
 
     protected static ?int $navigationSort = 106;
 
@@ -240,36 +238,3 @@ class PinjamResource extends Resource
         // });
     }
 }
-
-
-
-// Forms\Components\Select::make('perangkat_id')
-// ->label('Perangkat')
-// ->options(Perangkat::query()->pluck('nama', 'id'))
-// ->required()
-// ->reactive()
-// ->afterStateHydrated(function (Forms\Set $set, Forms\Get $get, $state) {
-//     $perangkat = Perangkat::find($state);
-//     $set('serial_number', $perangkat?->serial_number ?? 0);
-// })
-
-// ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get) {
-//     $perangkat = Perangkat::find($state);
-//     $set('unit_price', $perangkat?->serial_number ?? 0);
-// })
-
-// ->distinct()
-// ->disableOptionsWhenSelectedInSiblingRepeaterItems()
-// ->columnSpan([
-//     'md' => 5,
-// ])
-// ->searchable(),
-// Forms\Components\TextInput::make('serial_number')
-// ->label('Serial Number')
-// ->disabled()
-// ->dehydrated()
-// ->numeric()
-// ->required()
-// ->columnSpan([
-//     'md' => 3,
-// ]),

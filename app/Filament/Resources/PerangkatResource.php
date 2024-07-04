@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Clusters\Pinjams;
+use App\Filament\Clusters\Transaksi;
 use App\Filament\Resources\PerangkatResource\Pages;
 use App\Filament\Resources\PerangkatResource\RelationManagers;
 use App\Imports\PerangkatsImport;
@@ -29,9 +29,7 @@ class PerangkatResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    // protected static ?string $navigationGroup = 'Pinjam';
-
-    protected static ?string $cluster = Pinjams::class;
+    protected static ?string $cluster = Transaksi::class;
 
     protected static ?int $navigationSort = 105;
 

@@ -1,6 +1,10 @@
 <?php
 
+use App\Http\Controllers\TemplateController;
+use App\Imports\AssetsImport;
+use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Route;
+use Maatwebsite\Excel\Facades\Excel;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +21,32 @@ use Illuminate\Support\Facades\Route;
 //     return view('welcome');
 // });
 
+// Route::get('/import-asset', function () {
+//     return Excel::download(new AssetsImport, 'template_import_asset.xlsx');
+// })->name('import-asset');
+
+Route::get(
+    '/import-pinjams',
+    [TemplateController::class, 'importPinjams']
+)->name('import-pinjams');
+
+Route::get(
+    '/import-karyawans',
+    [TemplateController::class, 'importKaryawans']
+)->name('import-karyawans');
+
+Route::get(
+    '/import-perangkats',
+    [TemplateController::class, 'importPerangkats']
+)->name('import-perangkats');
+
+Route::get(
+    '/import-assets',
+    [TemplateController::class, 'importAssets']
+)->name('import-assets');
+
+
 Route::get('/', function () {
     return redirect()->route('filament.admin.auth.login');
 });
+

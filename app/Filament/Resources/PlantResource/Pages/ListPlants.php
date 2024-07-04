@@ -14,12 +14,13 @@ class ListPlants extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+                ->label('New Plant'),
         ];
     }
 
-    protected function getTableQuery(): Builder
-    {
-        return parent::getTableQuery()->where('is_aktif', true);
-    }
+    // protected function getTableQuery(): Builder
+    // {
+    //     return parent::getTableQuery()->where('is_aktif', true);
+    // }
 }

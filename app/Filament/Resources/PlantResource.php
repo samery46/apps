@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Exports\PlantExport;
 use App\Filament\Clusters\Plants;
 use App\Filament\Resources\PlantResource\Pages;
 use App\Filament\Resources\PlantResource\RelationManagers;
@@ -17,6 +18,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Tables\Filters\TernaryFilter;
 use App\Helpers\EmailHelper; // Pastikan Anda mengimpor EmailHelper
+use Filament\Tables\Actions\BulkAction;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PlantResource extends Resource
 {
@@ -153,6 +156,16 @@ class PlantResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
+
+                BulkAction::make('export')
+                    ->label('Export')
+                    ->color('info')
+                    ->action(function ($records) {
+                        $recordIds = $records->pluck('id')->toArray();
+                        $date = date('Y-m-d'); // Mendapatkan tanggal saat ini dalam format YYYY-MM-DD
+                        $fileName = "plant-{$date}.xlsx"; // Menambahkan tanggal pada nama file
+                        return Excel::download(new PlantExport($recordIds), $fileName);
+                    }),
             ]);
     }
 

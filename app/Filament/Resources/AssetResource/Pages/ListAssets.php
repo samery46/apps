@@ -1,63 +1,53 @@
 <?php
 
-namespace App\Filament\Resources\PinjamResource\Pages;
+namespace App\Filament\Resources\AssetResource\Pages;
 
-use App\Filament\Resources\PinjamResource;
-use App\Imports\PinjamsImport;
+use App\Filament\Resources\AssetResource;
+use App\Imports\AssetsImport;
 use Filament\Actions;
 use Filament\Actions\Action;
+use Filament\Resources\Pages\ListRecords;
 use Filament\Forms\Components\FileUpload;
 use Filament\Notifications\Notification;
-use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
 use Maatwebsite\Excel\Facades\Excel;
 
-class ListPinjams extends ListRecords
+class ListAssets extends ListRecords
 {
-    protected static string $resource = PinjamResource::class;
+    protected static string $resource = AssetResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make()
-                ->label('New Pinjam'),
-            Action::make('importProducts')
+                ->label('New Asset'),
+            Action::make('importAssets')
                 ->label('Import')
                 ->icon('heroicon-s-arrow-down-tray')
                 ->color('info')
                 ->form([
                     FileUpload::make('attachment')
-                        ->label('Upload Template Pinjam')
+                        ->label('Upload Template Import')
                 ])
                 ->action(function (array $data) {
                     $file = public_path('storage/' . $data['attachment']);
 
                     try {
-                        Excel::import(new PinjamsImport, $file);
+                        Excel::import(new AssetsImport, $file);
                         Notification::make()
-                            ->title('Pinjam Imported')
+                            ->title('Assets Imported')
                             ->success()
                             ->send();
                     } catch (\Exception $e) {
                         Notification::make()
-                            ->title('Pinjams Failed to Import')
+                            ->title('Assets Failed to Import')
                             ->danger()
                             ->send();
                     }
                 }),
             Action::make('Template')
-                ->url(route('import-pinjams'))
+                ->url(route('import-assets'))
                 ->color('warning'),
         ];
-    }
-
-
-    // Query untuk memfilter/tidak menampilkan transaksi peminjaman yang sudah complete
-    protected function getTableQuery(): Builder
-    {
-        return parent::getTableQuery()
-            // ->where('is_complete', false)
-            // ->orderBy('is_complete', 'desc');
-            ->orderBy('created_at', 'desc');
     }
 }

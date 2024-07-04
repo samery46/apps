@@ -19,6 +19,8 @@ class ListKaryawans extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
+            Actions\CreateAction::make()
+                ->label('New Karyawan'),
             Action::make('importProducts')
                 ->label('Import')
                 ->icon('heroicon-s-arrow-down-tray')
@@ -43,11 +45,9 @@ class ListKaryawans extends ListRecords
                             ->send();
                     }
                 }),
-            // Action::make('Download Template')
-            //     ->url(route('export-categories'))
-            //     ->color('warning'),
-
-            Actions\CreateAction::make(),
+            Action::make('Template')
+                ->url(route('import-karyawans'))
+                ->color('warning'),
         ];
     }
 

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\KaryawanResource\Pages;
+use App\Models\Company;
 use App\Models\Departemen;
 use App\Models\Karyawan;
 use App\Models\Plant;
@@ -145,69 +146,26 @@ class KaryawanResource extends Resource
             ]);
     }
 
-    // public static function form(Form $form): Form
-    // {
-    //     return $form
-    //         ->schema([
-    //             Forms\Components\Select::make('plant_id')
-    //                 ->relationship('plant', 'kode')
-    //                 ->required(),
-    //             Forms\Components\Select::make('departemen_id')
-    //                 ->relationship('departemen', 'kode')
-    //                 ->required(),
-    //             Forms\Components\TextInput::make('nama')
-    //                 ->required()
-    //                 ->maxLength(255),
-    //             Forms\Components\TextInput::make('nik')
-    //                 ->label('NIK')
-    //                 ->required()
-    //                 ->maxLength(255),
-    //             Forms\Components\TextInput::make('job_title')
-    //                 ->label('Job Title')
-    //                 ->maxLength(255),
-    //             Forms\Components\TextInput::make('email')
-    //                 ->email()
-    //                 ->maxLength(255),
-    //             Forms\Components\TextInput::make('uid_sap')
-    //                 ->label('User ID SAP')
-    //                 ->maxLength(255),
-    //             Forms\Components\TextInput::make('user_ad')
-    //                 ->label('User AD')
-    //                 ->maxLength(255),
-    //             Forms\Components\TextInput::make('computer_name')
-    //                 ->label('Computer Name')
-    //                 ->maxLength(255),
-    //             Forms\Components\DatePicker::make('tgl_lahir')
-    //                 ->label('Tgl Lahir'),
-    //             Forms\Components\TextInput::make('status')
-    //                 ->maxLength(255),
-    //             Forms\Components\TextInput::make('foto')
-    //                 ->maxLength(255),
-    //             Forms\Components\Toggle::make('is_aktif')
-    //                 ->required(),
-    //         ]);
-    // }
-
     public static function table(Table $table): Table
     {
         return $table
-            // ->query(function (Builder $query) {
-            //     return $query->where('is_aktif', true);
-            // })
             ->columns([
-
-                // Tables\Columns\TextColumn::make('plant.kode')
-                //     ->label('Plant')
-                //     ->numeric()
-                //     ->sortable()
-                //     ->searchable(),
+                Tables\Columns\TextColumn::make('company.kode')
+                    ->label('Company')
+                    ->getStateUsing(function ($record) {
+                        // Ambil plant_id dari entitas Karyawan
+                        $plantId = $record->plant_id;
+                        // Ambil company_id dari entitas Plant berdasarkan plant_id
+                        $companyId = optional(Plant::find($plantId))->company_id;
+                        // Ambil kode dari entitas Company berdasarkan company_id
+                        return optional(Company::find($companyId))->kode;
+                    }),
                 Tables\Columns\TextColumn::make('plant.kode')
                     ->label('Plant')
                     ->searchable()
                     ->getStateUsing(function ($record) {
                         return $record->plant->kode . ' - ' . $record->plant->nama;
                     }),
-
                 Tables\Columns\TextColumn::make('departemen.kode')
                     ->label('Dept')
                     ->numeric()
@@ -215,22 +173,29 @@ class KaryawanResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('nik')
                     ->label('NIK')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('nama')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('job_title')
                     ->label('Job Title')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('user_ad')
+                    ->sortable()
                     ->label('User AD')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('uid_sap')
                     ->label('UID SAP')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('status')
                     ->label('Ext')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\IconColumn::make('is_aktif')
                     ->boolean(),
@@ -248,6 +213,7 @@ class KaryawanResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+
                 SelectFilter::make('plant_id')
                     ->relationship('plant', 'kode')
                     ->label('Filter by Plant')
@@ -274,9 +240,12 @@ class KaryawanResource extends Resource
                 ]),
                 BulkAction::make('export')
                     ->label('Export')
+                    ->color('info')
                     ->action(function ($records) {
                         $recordIds = $records->pluck('id')->toArray();
-                        return Excel::download(new KaryawanExport($recordIds), 'karyawan.xlsx');
+                        $date = date('Y-m-d'); // Mendapatkan tanggal saat ini dalam format YYYY-MM-DD
+                        $fileName = "karyawan-{$date}.xlsx"; // Menambahkan tanggal pada nama file
+                        return Excel::download(new KaryawanExport($recordIds), $fileName);
                     }),
             ]);
     }

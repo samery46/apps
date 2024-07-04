@@ -38,6 +38,11 @@ class Karyawan extends Model
         return $this->belongsTo(Departemen::class);
     }
 
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
+    }
+
     // Menambahkan global scope, hanya menampilkan karyawan yang aktif
     protected static function booted()
     {

@@ -19,6 +19,8 @@ class ListPerangkats extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
+            Actions\CreateAction::make()
+                ->label('New Perangkat'),
             Action::make('importProducts')
                 ->label('Import')
                 ->icon('heroicon-s-arrow-down-tray')
@@ -43,11 +45,9 @@ class ListPerangkats extends ListRecords
                             ->send();
                     }
                 }),
-            // Action::make('Download Template')
-            //     ->url(route('export-categories'))
-            //     ->color('warning'),
-            Actions\CreateAction::make(),
-
+            Action::make('Template')
+                ->url(route('import-perangkats'))
+                ->color('warning'),
         ];
     }
 
