@@ -28,7 +28,7 @@ class CompanyResource extends Resource
 
     protected static ?string $cluster = Plants::class;
 
-    protected static ?int $navigationSort = 100;
+    protected static ?int $navigationSort = 101;
 
     public static function form(Form $form): Form
     {
@@ -77,9 +77,9 @@ class CompanyResource extends Resource
                 Tables\Columns\TextColumn::make('nama')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('kota')
-                    ->searchable()
-                    ->sortable(),
+                // Tables\Columns\TextColumn::make('kota')
+                //     ->searchable()
+                //     ->sortable(),
                 // Tables\Columns\TextColumn::make('alamat')
                 //     ->searchable(),
                 // Tables\Columns\TextColumn::make('pos')
@@ -120,7 +120,7 @@ class CompanyResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                // Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

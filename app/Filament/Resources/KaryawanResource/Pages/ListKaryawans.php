@@ -35,12 +35,12 @@ class ListKaryawans extends ListRecords
                     try {
                         Excel::import(new KaryawansImport, $file);
                         Notification::make()
-                            ->title('Perangkat Imported')
+                            ->title('Karyawan Imported')
                             ->success()
                             ->send();
                     } catch (\Exception $e) {
                         Notification::make()
-                            ->title('Perangkats Failed to Import')
+                            ->title('Karyawan Failed to Import')
                             ->danger()
                             ->send();
                     }

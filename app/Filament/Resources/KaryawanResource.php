@@ -32,7 +32,7 @@ class KaryawanResource extends Resource
 
     protected static ?string $navigationGroup = 'Master';
 
-    protected static ?int $navigationSort = 103;
+    protected static ?int $navigationSort = 112;
 
     public static function form(Form $form): Form
     {
@@ -197,8 +197,8 @@ class KaryawanResource extends Resource
                     ->label('Ext')
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\IconColumn::make('is_aktif')
-                    ->boolean(),
+                // Tables\Columns\IconColumn::make('is_aktif')
+                //     ->boolean(),
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->dateTime()
                     ->sortable()

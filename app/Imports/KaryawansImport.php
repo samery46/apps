@@ -26,10 +26,8 @@ class KaryawansImport implements ToModel, WithHeadingRow, WithMultipleSheets, Sk
      */
     public function model(array $row)
     {
-        // dd($row);
-
         // Periksa apakah nilai tanggal tidak kosong dan valid
-        $tglLahir = $row['tgl_lahir'] ? Carbon::parse($row['tgl_lahir'])->format('Y-m-d') : null;
+        // $tglLahir = $row['tgl_lahir'] ? Carbon::parse($row['tgl_lahir'])->format('Y-m-d') : null;
 
         return new Karyawan([
 
@@ -40,7 +38,7 @@ class KaryawansImport implements ToModel, WithHeadingRow, WithMultipleSheets, Sk
             'uid_sap' => $row['uid_sap'],
             'user_ad' => $row['user_ad'],
             'computer_name' => $row['computer_name'],
-            'tgl_lahir' => $tglLahir,
+            // 'tgl_lahir' => $tglLahir,
             'status' => $row['status'],
             'foto' => $row['foto'],
             'plant_id' => $row['plant_id'],

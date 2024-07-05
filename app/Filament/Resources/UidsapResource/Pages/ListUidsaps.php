@@ -53,8 +53,8 @@ class ListUidsaps extends ListRecords
 
 
     // Query untuk memfilter/tidak menampilkan perangkat yang tidak aktif
-    protected function getTableQuery(): Builder
-    {
-        return parent::getTableQuery()->where('is_aktif', true);
-    }
+    // protected function getTableQuery(): Builder
+    // {
+    //     return parent::getTableQuery()->where('is_aktif', true);
+    // }
 }

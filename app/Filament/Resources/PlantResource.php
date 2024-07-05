@@ -31,7 +31,7 @@ class PlantResource extends Resource
 
     protected static ?string $cluster = Plants::class;
 
-    protected static ?int $navigationSort = 101;
+    protected static ?int $navigationSort = 102;
 
     public static function form(Form $form): Form
     {
@@ -150,7 +150,6 @@ class PlantResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

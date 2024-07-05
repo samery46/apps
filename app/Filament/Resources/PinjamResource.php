@@ -2,12 +2,12 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Clusters\Transaksi;
 use App\Filament\Resources\PinjamResource\Pages;
 use App\Filament\Resources\PinjamResource\RelationManagers;
 use App\Models\Karyawan;
 use App\Models\Perangkat;
 use App\Models\Pinjam;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Tables\Filters\TernaryFilter;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Log;
 
 class PinjamResource extends Resource
 {
@@ -29,9 +29,9 @@ class PinjamResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $cluster = Transaksi::class;
+    protected static ?string $navigationGroup = 'Transaksi';
 
-    protected static ?int $navigationSort = 106;
+    protected static ?int $navigationSort = 131;
 
     public static function form(Form $form): Form
     {
@@ -62,9 +62,11 @@ class PinjamResource extends Resource
                     ->schema([
                         Forms\Components\DatePicker::make('tgl_pinjam')
                             ->label('Tanggal Pinjam')
+                            ->default(Carbon::today()->format('Y-m-d'))
                             ->required(),
                         Forms\Components\DatePicker::make('tgl_kembali')
                             ->label('Tanggal Kembali')
+                            ->default(Carbon::today()->format('Y-m-d'))
                             ->hiddenOn('create'),
                     ])->columns(2),
                 Forms\Components\Section::make('Penyerah')
@@ -171,8 +173,10 @@ class PinjamResource extends Resource
         return Repeater::make('items')
             ->relationship()
             ->schema([
+
                 Forms\Components\Select::make('perangkat_id')
                     ->label('Perangkat')
+                    // ->options(Perangkat::query()->pluck('nama', 'id'))
                     ->options(function () {
                         return Perangkat::where('is_aktif', true)
                             ->get()
@@ -182,15 +186,14 @@ class PinjamResource extends Resource
                     })
                     ->required()
                     ->reactive()
-                    // ->afterStateHydrated(function (Forms\Set $set, Forms\Get $get, $state) {
-                    //     $perangkat = Perangkat::find($state);
-                    //     $set('serial_number', $perangkat?->serial_number ?? 0);
-                    // })
-                    // ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get) {
-                    //     $perangkat = Perangkat::find($state);
-                    //     $set('serial_number', $perangkat?->serial_number ?? 0);
-                    //     $serial_number = $get('serial_number');
-                    // })
+                    ->afterStateHydrated(function (Forms\Set $set, Forms\Get $get, $state) {
+                        $perangkat = Perangkat::find($state);
+                        $set('serial_number', $perangkat?->serial_number ?? 0);
+                    })
+                    ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get) {
+                        $perangkat = Perangkat::find($state);
+                        $set('serial_number', $perangkat?->serial_number ?? 0);
+                    })
 
                     ->distinct()
                     ->disableOptionsWhenSelectedInSiblingRepeaterItems()
@@ -203,12 +206,11 @@ class PinjamResource extends Resource
                 //     ->label('Serial Number')
                 //     ->disabled()
                 //     ->dehydrated()
-                //     ->numeric()
+                //     // ->numeric()
                 //     ->required()
                 //     ->columnSpan([
                 //         'md' => 3,
                 //     ]),
-
             ])
             ->extraItemActions([
                 Action::make('openPerangkat')
@@ -235,3 +237,38 @@ class PinjamResource extends Resource
         // });
     }
 }
+
+
+
+
+// Forms\Components\Select::make('perangkat_id')
+//                     ->label('Perangkat')
+//                     ->options(Perangkat::query()->pluck('nama', 'id'))
+//                     // ->options(function () {
+//                     //     return Perangkat::where('is_aktif', true)
+//                     //         ->get()
+//                     //         ->mapWithKeys(function ($perangkat) {
+//                     //             return [$perangkat->id => $perangkat->nama . ' ' . $perangkat->serial_number];
+//                     //         })->toArray();
+//                     // })
+//                     ->required()
+//                     ->reactive()
+
+//                     // sampai sini
+//                     ->afterStateHydrated(function (Forms\Set $set, Forms\Get $get, $state) {
+//                         $perangkat = Perangkat::find($state);
+//                         $set('serial_number', $perangkat?->serial_number ?? 0);
+//                     })
+//                     ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get) {
+//                         $perangkat = Perangkat::find($state);
+//                         $set('serial_number', $perangkat?->serial_number ?? 0);
+//                         // $serial_number = $get('serial_number');
+//                     })
+
+//                     //ini dipakai
+//                     ->distinct()
+//                     ->disableOptionsWhenSelectedInSiblingRepeaterItems()
+//                     ->columnSpan([
+//                         'md' => 5,
+//                     ])
+//                     ->searchable(),

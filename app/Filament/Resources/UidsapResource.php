@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Maatwebsite\Excel\Facades\Excel;
 use Filament\Tables\Actions\BulkAction;
-
+use Filament\Tables\Filters\TernaryFilter;
 
 class UidsapResource extends Resource
 {
@@ -31,7 +31,7 @@ class UidsapResource extends Resource
 
     protected static ?string $navigationGroup = 'Master';
 
-    protected static ?int $navigationSort = 107;
+    protected static ?int $navigationSort = 114;
 
     public static function form(Form $form): Form
     {
@@ -77,7 +77,6 @@ class UidsapResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('plant.kode')
                     ->label('Plant')
-                    ->searchable()
                     ->getStateUsing(function ($record) {
                         $karyawanId = $record->karyawan_id;
                         $plantId = optional(Karyawan::find($karyawanId))->plant_id;
@@ -90,7 +89,6 @@ class UidsapResource extends Resource
 
                 Tables\Columns\TextColumn::make('departemen.kode')
                     ->label('Dept')
-                    ->searchable()
                     ->getStateUsing(function ($record) {
                         $karyawanId = $record->karyawan_id;
                         $departemenId = optional(Karyawan::find($karyawanId))->departemen_id;
@@ -139,7 +137,16 @@ class UidsapResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                TernaryFilter::make('is_aktif')
+                    ->label('Filter by Aktif')
+                    ->trueLabel('Aktif')
+                    ->falseLabel('Non Aktif')
+                    ->placeholder('All')
+                    ->queries(
+                        true: fn (Builder $query): Builder => $query->where('is_aktif', true),
+                        false: fn (Builder $query): Builder => $query->where('is_aktif', false),
+                        blank: fn (Builder $query): Builder => $query
+                    ),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

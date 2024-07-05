@@ -27,7 +27,7 @@ class DepartemenResource extends Resource
     // protected static ?string $navigationGroup = 'Plant';
     protected static ?string $cluster = Plants::class;
 
-    protected static ?int $navigationSort = 102;
+    protected static ?int $navigationSort = 103;
 
     public static function form(Form $form): Form
     {
@@ -90,10 +90,10 @@ class DepartemenResource extends Resource
                 //     ->label('Ket')
                 //     ->searchable(),
                 // Tables\Columns\TextColumn::make('user.name')->label('User'),
-                Tables\Columns\IconColumn::make('is_aktif')
-                    ->label('Is Aktif')
-                    ->boolean()
-                    ->sortable(),
+                // Tables\Columns\IconColumn::make('is_aktif')
+                //     ->label('Is Aktif')
+                //     ->boolean()
+                //     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -127,7 +127,7 @@ class DepartemenResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                // Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

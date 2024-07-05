@@ -30,7 +30,7 @@ class AssetResource extends Resource
 
     protected static ?string $navigationGroup = 'Master';
 
-    protected static ?int $navigationSort = 104;
+    protected static ?int $navigationSort = 111;
 
     public static function form(Form $form): Form
     {
@@ -194,18 +194,18 @@ class AssetResource extends Resource
                     ->label('Pengguna')
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('qty_sap')
-                    ->label('Qty-SAP')
-                    ->numeric()
-                    ->sortable(),
+                // Tables\Columns\TextColumn::make('qty_sap')
+                //     ->label('Qty-SAP')
+                //     ->numeric()
+                //     ->sortable(),
                 Tables\Columns\TextColumn::make('qty_aktual')
                     ->label('Qty-Aktual')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\IconColumn::make('is_aktif')
-                    ->label('Aktif')
-                    ->sortable()
-                    ->boolean(),
+                // Tables\Columns\IconColumn::make('is_aktif')
+                //     ->label('Aktif')
+                //     ->sortable()
+                //     ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

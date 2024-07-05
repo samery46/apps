@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Clusters\Transaksi;
 use App\Filament\Resources\PerangkatResource\Pages;
 use App\Filament\Resources\PerangkatResource\RelationManagers;
 use App\Imports\PerangkatsImport;
@@ -29,9 +28,11 @@ class PerangkatResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $cluster = Transaksi::class;
+    // protected static ?string $cluster = Transaksi::class;
 
-    protected static ?int $navigationSort = 105;
+    protected static ?string $navigationGroup = 'Master';
+
+    protected static ?int $navigationSort = 113;
 
     public static function form(Form $form): Form
     {
@@ -112,7 +113,7 @@ class PerangkatResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                // Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
