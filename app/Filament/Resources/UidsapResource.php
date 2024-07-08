@@ -59,7 +59,8 @@ class UidsapResource extends Resource
                                     ->toArray();
                             })
                             ->getOptionLabelUsing(function ($value) {
-                                return Karyawan::find($value)->nama;
+                                $karyawan = Karyawan::find($value);
+                                return $karyawan ? $karyawan->nama : null;
                             }),
 
                         Forms\Components\DatePicker::make('valid_end'),
