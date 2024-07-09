@@ -9,4 +9,9 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateUidsap extends CreateRecord
 {
     protected static string $resource = UidsapResource::class;
+
+    public function getTitle(): string
+    {
+        return 'Create UID SAP';
+    }
 }

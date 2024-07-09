@@ -50,6 +50,11 @@ Route::get(
     [TemplateController::class, 'importUidsap']
 )->name('import-uidsap');
 
+Route::get(
+    '/import-material',
+    [TemplateController::class, 'importMaterial']
+)->name('import-material');
+
 
 Route::get('/', function () {
     return redirect()->route('filament.admin.auth.login');

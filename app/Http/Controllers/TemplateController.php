@@ -67,4 +67,16 @@ class TemplateController extends Controller
 
         return redirect()->back()->with('error', 'File template tidak ditemukan.');
     }
+
+    public function importMaterial()
+    {
+        $filePath = 'public/templates/template_import_material.xlsx';
+        $fileName = 'template_import_material.xlsx';
+
+        if (Storage::exists($filePath)) {
+            return Storage::download($filePath, $fileName);
+        }
+
+        return redirect()->back()->with('error', 'File template tidak ditemukan.');
+    }
 }
