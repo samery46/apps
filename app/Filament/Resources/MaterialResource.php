@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Hidden;
 use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Maatwebsite\Excel\Facades\Excel;
 
 class MaterialResource extends Resource
@@ -75,22 +77,31 @@ class MaterialResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('kode')
                     ->label('Kode')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('nama')
                     ->label('Nama Material')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('kategori')
                     ->formatStateUsing(function ($state) {
                         return $state == '1' ? 'Finish Goods' : ($state == '2' ? 'Raw Material' : $state);
                     })
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('uom')
                     ->label('UoM')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('group')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\IconColumn::make('is_aktif')
                     ->boolean(),
+                Tables\Columns\TextColumn::make('keterangan')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -103,9 +114,33 @@ class MaterialResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-            ])
+            ])->defaultSort('kode', 'asc')
             ->filters([
-                //
+
+                SelectFilter::make('kategori')
+                    ->label('Filter by Kategori')
+                    ->options([
+                        '1' => 'Finish Goods',
+                        '2' => 'Raw Material',
+                    ]),
+                SelectFilter::make('uom')
+                    ->label('Filter by UoM')
+                    ->options(function () {
+                        return Material::distinct()
+                            ->pluck('uom', 'uom')
+                            ->toArray();
+                    }),
+                TernaryFilter::make('is_aktif')
+                    ->label('Filter by Aktif')
+                    ->trueLabel('Aktif')
+                    ->falseLabel('Non Aktif')
+                    ->placeholder('Semua')
+                    ->queries(
+                        true: fn (Builder $query): Builder => $query->where('is_aktif', true),
+                        false: fn (Builder $query): Builder => $query->where('is_aktif', false),
+                        blank: fn (Builder $query): Builder => $query
+                    ),
+
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

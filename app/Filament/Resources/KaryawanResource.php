@@ -213,12 +213,6 @@ class KaryawanResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-
-                SelectFilter::make('plant_id')
-                    ->relationship('plant', 'kode')
-                    ->label('Filter by Plant')
-                    ->options(Plant::all()->pluck('kode', 'id')->toArray()),
-
                 TernaryFilter::make('is_aktif')
                     ->label('Filter by Aktif')
                     ->trueLabel('Aktif')

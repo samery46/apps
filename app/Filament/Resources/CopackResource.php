@@ -19,7 +19,9 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Hidden;
 use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Filters\SelectFilter;
 use Maatwebsite\Excel\Facades\Excel;
+
 
 class CopackResource extends Resource
 {
@@ -146,13 +148,15 @@ class CopackResource extends Resource
                     ->label('UoM')
                     ->sortable()
                     ->searchable(),
-                // Tables\Columns\TextColumn::make('keterangan')
-                //     ->searchable(),
-                // Tables\Columns\TextColumn::make('user.name')
-                //     ->label('User Create')
-                //     ->numeric()
-                //     ->sortable()
-                //     ->searchable(),
+                Tables\Columns\TextColumn::make('keterangan')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label('User Create')
+                    ->numeric()
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -165,9 +169,37 @@ class CopackResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-            ])
+            ])->defaultSort('created_at', 'desc')
             ->filters([
-                //
+                SelectFilter::make('plant_id')
+                    ->label('Filter by Plant')
+                    ->options(function () {
+                        return Copack::with('plant')
+                            ->get()
+                            ->mapWithKeys(function ($item) {
+                                return [$item->plant_id => $item->plant->kode . ' - ' . $item->plant->nama];
+                            })
+                            ->toArray();
+                    }),
+                SelectFilter::make('tgl')
+                    ->label('Filter by Tgl')
+                    ->options(function () {
+                        return Copack::orderBy('tgl', 'desc')
+                            ->distinct()
+                            ->pluck('tgl', 'tgl')
+                            ->toArray();
+                    }),
+                SelectFilter::make('material_id')
+                    ->label('Filter by Material')
+                    ->options(function () {
+                        return Copack::with('material')
+                            ->get()
+                            ->mapWithKeys(function ($item) {
+                                return [$item->material_id => $item->material->kode . ' - ' . $item->material->nama];
+                            })
+                            ->toArray();
+                    }),
+
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
