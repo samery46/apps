@@ -34,7 +34,6 @@ class MaterialResource extends Resource
     {
         return $form
             ->schema([
-
                 Forms\Components\Section::make('Material')
                     ->description('Detail Material')
                     ->schema([
@@ -74,9 +73,6 @@ class MaterialResource extends Resource
     {
         return $table
             ->columns([
-                // Tables\Columns\TextColumn::make('user_id')
-                //     ->numeric()
-                //     ->sortable(),
                 Tables\Columns\TextColumn::make('kode')
                     ->label('Kode')
                     ->searchable(),
@@ -85,7 +81,7 @@ class MaterialResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('kategori')
                     ->formatStateUsing(function ($state) {
-                        return $state == '1' ? 'Finish Good' : ($state == '2' ? 'Raw Material' : $state);
+                        return $state == '1' ? 'Finish Goods' : ($state == '2' ? 'Raw Material' : $state);
                     })
                     ->searchable(),
                 Tables\Columns\TextColumn::make('uom')
@@ -93,8 +89,6 @@ class MaterialResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('group')
                     ->searchable(),
-                // Tables\Columns\TextColumn::make('keterangan')
-                //     ->searchable(),
                 Tables\Columns\IconColumn::make('is_aktif')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')

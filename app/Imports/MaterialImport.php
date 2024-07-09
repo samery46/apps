@@ -8,8 +8,9 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\WithValidation;
+use Carbon\Carbon;
 
-class MaterialsImport implements ToModel, WithHeadingRow, WithMultipleSheets, SkipsEmptyRows, WithValidation
+class MaterialImport implements ToModel, WithHeadingRow, WithMultipleSheets, SkipsEmptyRows, WithValidation
 {
 
     public function sheets(): array
@@ -25,7 +26,6 @@ class MaterialsImport implements ToModel, WithHeadingRow, WithMultipleSheets, Sk
      */
     public function model(array $row)
     {
-        // dd($row);
         return new Material([
             'kode' => $row['kode'],
             'nama' => $row['nama'],
@@ -41,7 +41,7 @@ class MaterialsImport implements ToModel, WithHeadingRow, WithMultipleSheets, Sk
     public function rules(): array
     {
         return [
-            '*.user_id' => 'exists:users,id',
+            '*.user_id' => 'required|exists:users,id',
         ];
     }
 

@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\MaterialResource\Pages;
 
 use App\Filament\Resources\MaterialResource;
-use App\Imports\MaterialsImport;
+use App\Imports\MaterialImport;
 use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
@@ -32,7 +32,7 @@ class ListMaterials extends ListRecords
                     $file = public_path('storage/' . $data['attachment']);
 
                     try {
-                        Excel::import(new MaterialsImport, $file);
+                        Excel::import(new MaterialImport, $file);
                         Notification::make()
                             ->title('Materials Imported')
                             ->success()
