@@ -43,18 +43,18 @@ class FilamentServiceProvider extends ServiceProvider
         //     ]);
         // });
 
-        Filament::registerNavigationItems([
-            NavigationItem::make('Users')
-                ->group('User Management')
-                ->icon('heroicon-o-users')
-                ->url(UserResource::getUrl('index'))
-                ->sort(1),
-            NavigationItem::make('Roles')
-                ->group('User Management')
-                ->icon('heroicon-o-shield-check')
-                ->url(RoleResource::getUrl('index'))
-                ->sort(2),
-            // Tambahkan item lainnya di sini
-        ]);
+        // Filament::registerNavigationItems([
+        //     NavigationItem::make('Users')
+        //         ->group('User Management')
+        //         ->icon('heroicon-o-users')
+        //         ->url(UserResource::getUrl('index'))
+        //         ->sort(1),
+        //     NavigationItem::make('Roles')
+        //         ->group('User Management')
+        //         ->icon('heroicon-o-shield-check')
+        //         ->url(RoleResource::getUrl('index'))
+        //         ->sort(2),
+        //     // Tambahkan item lainnya di sini
+        // ]);
     }
 }
