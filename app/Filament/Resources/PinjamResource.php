@@ -7,6 +7,7 @@ use App\Filament\Resources\PinjamResource\RelationManagers;
 use App\Models\Karyawan;
 use App\Models\Perangkat;
 use App\Models\Pinjam;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -21,7 +22,7 @@ use Filament\Tables\Filters\TernaryFilter;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
-class PinjamResource extends Resource
+class PinjamResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Pinjam::class;
 
@@ -116,6 +117,9 @@ class PinjamResource extends Resource
                     ->label('Completed')
                     ->sortable()
                     ->boolean(),
+                Tables\Columns\TextColumn::make('keterangan')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -235,6 +239,18 @@ class PinjamResource extends Resource
         // ->afterStateUpdated(function (Forms\Get $get, Forms\Set $set) {
         //     self::updateTotalPrice($get, $set);
         // });
+    }
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any'
+        ];
     }
 }
 

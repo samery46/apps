@@ -18,10 +18,11 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Tables\Filters\TernaryFilter;
 use App\Helpers\EmailHelper; // Pastikan Anda mengimpor EmailHelper
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Tables\Actions\BulkAction;
 use Maatwebsite\Excel\Facades\Excel;
 
-class PlantResource extends Resource
+class PlantResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Plant::class;
 
@@ -183,6 +184,22 @@ class PlantResource extends Resource
             'edit' => Pages\EditPlant::route('/{record}/edit'),
         ];
     }
+
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any'
+        ];
+    }
+
+
+
 
     // public static function afterSave($record): void
     // {

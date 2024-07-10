@@ -175,6 +175,7 @@ class Pinjam extends Model
             </tbody>
             </table>
             <br>
+            <b>Keterangan</b> : {$record->keterangan}<br>
             Terimakasih.<br>
             <br>
             <b>Penyerah/Penerima</b><br>

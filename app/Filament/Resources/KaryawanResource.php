@@ -20,9 +20,10 @@ use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Actions\Action;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\KaryawanExport;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Tables\Actions\BulkAction;
 
-class KaryawanResource extends Resource
+class KaryawanResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Karyawan::class;
 
@@ -257,6 +258,18 @@ class KaryawanResource extends Resource
             'index' => Pages\ListKaryawans::route('/'),
             'create' => Pages\CreateKaryawan::route('/create'),
             'edit' => Pages\EditKaryawan::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any'
         ];
     }
 }

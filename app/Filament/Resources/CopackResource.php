@@ -8,6 +8,7 @@ use App\Filament\Resources\CopackResource\RelationManagers;
 use App\Models\Copack;
 use App\Models\Material;
 use App\Models\Plant;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -23,7 +24,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Maatwebsite\Excel\Facades\Excel;
 
 
-class CopackResource extends Resource
+class CopackResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Copack::class;
 
@@ -236,6 +237,18 @@ class CopackResource extends Resource
             'index' => Pages\ListCopacks::route('/'),
             'create' => Pages\CreateCopack::route('/create'),
             'edit' => Pages\EditCopack::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any'
         ];
     }
 }

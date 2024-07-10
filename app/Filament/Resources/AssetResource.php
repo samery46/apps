@@ -8,6 +8,7 @@ use App\Filament\Resources\AssetResource\RelationManagers;
 use App\Models\Asset;
 use App\Models\Karyawan;
 use App\Models\Plant;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -20,7 +21,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Actions\BulkAction;
 use Maatwebsite\Excel\Facades\Excel;
 
-class AssetResource extends Resource
+class AssetResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Asset::class;
 
@@ -269,6 +270,18 @@ class AssetResource extends Resource
             'index' => Pages\ListAssets::route('/'),
             'create' => Pages\CreateAsset::route('/create'),
             'edit' => Pages\EditAsset::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any'
         ];
     }
 }

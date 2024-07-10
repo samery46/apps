@@ -7,6 +7,7 @@ use App\Imports\PerangkatsImport;
 use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Tabs\Tab;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
@@ -52,8 +53,9 @@ class ListPerangkats extends ListRecords
     }
 
     // Query untuk memfilter/tidak menampilkan perangkat yang tidak aktif
-    protected function getTableQuery(): Builder
-    {
-        return parent::getTableQuery()->where('is_aktif', true);
-    }
+    // protected function getTableQuery(): Builder
+    // {
+    //     return parent::getTableQuery()->where('is_aktif', true);
+    // }
+
 }

@@ -10,6 +10,7 @@ use App\Models\Company;
 use App\Models\Departemen;
 use App\Models\Karyawan;
 use App\Models\Plant;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -21,7 +22,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Filters\TernaryFilter;
 
-class UidsapResource extends Resource
+class UidsapResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Uidsap::class;
 
@@ -183,6 +184,18 @@ class UidsapResource extends Resource
             'index' => Pages\ListUidsaps::route('/'),
             'create' => Pages\CreateUidsap::route('/create'),
             'edit' => Pages\EditUidsap::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any'
         ];
     }
 }

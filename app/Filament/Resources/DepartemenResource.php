@@ -6,6 +6,7 @@ use App\Filament\Clusters\Plants;
 use App\Filament\Resources\DepartemenResource\Pages;
 use App\Filament\Resources\DepartemenResource\RelationManagers;
 use App\Models\Departemen;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -16,7 +17,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Tables\Filters\TernaryFilter;
 
-class DepartemenResource extends Resource
+class DepartemenResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Departemen::class;
 
@@ -149,6 +150,18 @@ class DepartemenResource extends Resource
             'index' => Pages\ListDepartemens::route('/'),
             'create' => Pages\CreateDepartemen::route('/create'),
             'edit' => Pages\EditDepartemen::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any'
         ];
     }
 }
