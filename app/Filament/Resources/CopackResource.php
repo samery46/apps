@@ -170,7 +170,7 @@ class CopackResource extends Resource implements HasShieldPermissions
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-            ])->defaultSort('created_at', 'desc')
+            ])->defaultSort('tgl', 'desc')
             ->filters([
                 SelectFilter::make('plant_id')
                     ->label('Filter by Plant')

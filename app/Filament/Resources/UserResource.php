@@ -45,9 +45,15 @@ class UserResource extends Resource
                     ->dehydrateStateUsing(fn ($state) => Hash::make($state))
                     ->dehydrated(fn ($state) => filled($state))
                     ->required(fn (string $context): bool => $context === 'create'),
-                Forms\Components\Select::make('role')
+                Forms\Components\Select::make('roles')
                     ->multiple()
                     ->relationship('roles', 'name'),
+                Forms\Components\FileUpload::make('avatar_url') // Tambahkan field untuk unggahan avatar
+                    ->directory('avatars') // Direktori tempat menyimpan file avatar
+                    ->image()
+                    ->imageCropAspectRatio('1:1')
+                    ->imageResizeTargetWidth('300')
+                    ->imageResizeTargetHeight('300'),
 
             ]);
     }
@@ -62,6 +68,9 @@ class UserResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('roles.name')
                     ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\ImageColumn::make('avatar_url')
+                    ->label('Avatar')
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

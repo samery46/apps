@@ -2,6 +2,8 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Resources\UserResource;
+use BezhanSalleh\FilamentShield\Resources\RoleResource;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -17,6 +19,13 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Joaopaulolndev\FilamentEditProfile\FilamentEditProfilePlugin;
+use Filament\Navigation\MenuItem;
+use Filament\Navigation\NavigationBuilder;
+use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\NavigationItem;
+use Filament\Pages\Dashboard;
+use Joaopaulolndev\FilamentEditProfile\Pages\EditProfilePage;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -27,6 +36,11 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            // di custom
+            // ->registration()
+            ->passwordReset()
+            ->emailVerification()
+
             ->colors([
                 'primary' => Color::Sky,
             ])
@@ -55,8 +69,33 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
+            ->userMenuItems([
+                'profile' => MenuItem::make()
+                    ->label(fn () => auth()->user()->name)
+                    ->url(fn (): string => EditProfilePage::getUrl())
+                    ->icon('heroicon-m-user-circle'),
+                //If you are using tenancy need to check with the visible method where ->company() is the relation between the user and tenancy model as you called
+                // ->visible(function (): bool {
+                //     return auth()->user()->company()->exists();
+                // }),
+            ])
+
+
             ->plugins([
-                \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make()
+                \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
+                FilamentEditProfilePlugin::make()
+                    ->slug('my-profile')
+                    ->setTitle('My Profile')
+                    ->setNavigationLabel('My Profile')
+                    ->setNavigationGroup('Setting')
+                    ->setIcon('heroicon-o-user')
+                    ->setSort(10)
+                    // ->canAccess(fn () => auth()->user()->id === 1)
+                    ->shouldRegisterNavigation(true)
+                    ->shouldShowDeleteAccountForm(true)
+                    // ->shouldShowSanctumTokens()
+                    // ->shouldShowBrowserSessionsForm()
+                    ->shouldShowAvatarForm()
             ]);
     }
 }
