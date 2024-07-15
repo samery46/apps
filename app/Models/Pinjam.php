@@ -119,10 +119,11 @@ class Pinjam extends Model
             $karyawanName = $record->karyawan->nama ?? '-';
             $karyawanEmail = $record->karyawan->email ?? '-';
             $karyawanJob = $record->karyawan->job_title ?? '-';
+            $departemenName = $record->karyawan->departemen->nama ?? '-';
             $userName = $record->user->name ?? '-';
             $emailcc = $record->user->email ?? '-';
-            $tglPinjam = DateHelper::formatIndonesianDate($record->tgl_pinjam);
-            $tglKembali = $record->tgl_kembali ? DateHelper::formatIndonesianDate($record->tgl_kembali) : '';
+            $tglPinjam = DateHelper::formatIndonesianDateSimple($record->tgl_pinjam);
+            $tglKembali = $record->tgl_kembali ? DateHelper::formatIndonesianDateSimple($record->tgl_kembali) : '';
             $tglUpdate = DateHelper::formatIndonesianDate($record->updated_at);
 
             $items = $record->items;
@@ -147,12 +148,32 @@ class Pinjam extends Model
             $fromName = $userName;
             $cc = $emailcc;
             $ccName = $userName;
-            $subject = 'Peminjaman Perangkat';
+
+            $peminjaman = '';
+            if (!$record->is_complete) {
+                $peminjaman = 'Peminjaman Perangkat';
+            } else {
+                $peminjaman = 'Pengembalian Perangkat';
+            }
+            $subject = $peminjaman;
+
+            // Tambahkan pesan jika is_complete bernilai false
+            $additionalMessage = '';
+            if (!$record->is_complete) {
+                $additionalMessage = '<p>Mohon untuk segera di kembalikan perangkat tsb, jika sudah selesai digunakan.</p>';
+            }
+
+            $penyerah = '';
+            if (!$record->is_complete) {
+                $penyerah = 'Penyerah';
+            } else {
+                $penyerah = 'Penerima';
+            }
 
             $body = "
             <p>Dear Bpk/Ibu/Sdr/i :</p>
-            <p><b>{$karyawanName}</b></p>
-            <p>Job Title: <b>{$karyawanJob}</b></p>
+            <p><b>{$karyawanName}</b>
+            <br>Dept : <b>{$departemenName}</b></p>
             <p>Berikut adalah data peminjaman perangkat Anda:</p>
             <table>
             <tbody>
@@ -175,10 +196,11 @@ class Pinjam extends Model
             </tbody>
             </table>
             <br>
+            {$additionalMessage}
             <b>Keterangan</b> : {$record->keterangan}<br>
             Terimakasih.<br>
             <br>
-            <b>Penyerah/Penerima</b><br>
+            <b>{$penyerah}</b><br>
             <br>
             <br>
             <u><b>{$userName}</b></u><br>

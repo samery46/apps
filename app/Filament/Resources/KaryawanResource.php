@@ -160,7 +160,8 @@ class KaryawanResource extends Resource implements HasShieldPermissions
                         $companyId = optional(Plant::find($plantId))->company_id;
                         // Ambil kode dari entitas Company berdasarkan company_id
                         return optional(Company::find($companyId))->kode;
-                    }),
+                    })
+                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('plant.kode')
                     ->label('Plant')
                     ->searchable()
@@ -171,7 +172,8 @@ class KaryawanResource extends Resource implements HasShieldPermissions
                     ->label('Dept')
                     ->numeric()
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('nik')
                     ->label('NIK')
                     ->sortable()
@@ -182,22 +184,27 @@ class KaryawanResource extends Resource implements HasShieldPermissions
                 Tables\Columns\TextColumn::make('job_title')
                     ->label('Job Title')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('email')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('user_ad')
                     ->sortable()
                     ->label('User AD')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('uid_sap')
                     ->label('UID SAP')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('status')
                     ->label('Ext')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 // Tables\Columns\IconColumn::make('is_aktif')
                 //     ->boolean(),
                 Tables\Columns\TextColumn::make('deleted_at')
@@ -214,6 +221,23 @@ class KaryawanResource extends Resource implements HasShieldPermissions
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                SelectFilter::make('plant_id')
+                    ->label('Filter by Plant')
+                    ->options(function () {
+                        // if (auth()->check() && auth()->user()->id === 1) {
+                        // Jika user memiliki ID 1, dianggap sebagai admin
+                        return Karyawan::with('plant')
+                            ->get()
+                            ->mapWithKeys(function ($item) {
+                                return [$item->plant_id => "{$item->plant->kode} - {$item->plant->nama}"];
+                            })
+                            ->toArray();
+                        // } else {
+                        // Jika bukan user dengan ID 1, ambil plant yang dimiliki oleh user
+                        // return auth()->user()->plants->pluck('nama', 'id')->toArray();
+                        // }
+                    }),
+
                 TernaryFilter::make('is_aktif')
                     ->label('Filter by Aktif')
                     ->trueLabel('Aktif')

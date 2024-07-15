@@ -172,16 +172,43 @@ class CopackResource extends Resource implements HasShieldPermissions
                     ->toggleable(isToggledHiddenByDefault: true),
             ])->defaultSort('tgl', 'desc')
             ->filters([
+
+                // jika menggunakan isAdmin di model User
+
+                // SelectFilter::make('plant_id')
+                //     ->label('Filter by Plant')
+                //     ->options(function () {
+                //         if (auth()->user()->isAdmin()) {
+                //             // Jika user admin, ambil semua plant dari Copack
+                //             return Copack::with('plant')
+                //                 ->get()
+                //                 ->mapWithKeys(function ($item) {
+                //                     return [$item->plant_id => "{$item->plant->kode} - {$item->plant->nama}"];
+                //                 })
+                //                 ->toArray();
+                //         } else {
+                //             // Jika bukan admin, ambil plant yang dimiliki oleh user
+                //             return auth()->user()->plants->pluck('nama', 'id')->toArray();
+                //         }
+                //     }),
+
                 SelectFilter::make('plant_id')
                     ->label('Filter by Plant')
                     ->options(function () {
-                        return Copack::with('plant')
-                            ->get()
-                            ->mapWithKeys(function ($item) {
-                                return [$item->plant_id => $item->plant->kode . ' - ' . $item->plant->nama];
-                            })
-                            ->toArray();
+                        if (auth()->check() && auth()->user()->id === 1) {
+                            // Jika user memiliki ID 1, dianggap sebagai admin
+                            return Copack::with('plant')
+                                ->get()
+                                ->mapWithKeys(function ($item) {
+                                    return [$item->plant_id => "{$item->plant->kode} - {$item->plant->nama}"];
+                                })
+                                ->toArray();
+                        } else {
+                            // Jika bukan user dengan ID 1, ambil plant yang dimiliki oleh user
+                            return auth()->user()->plants->pluck('nama', 'id')->toArray();
+                        }
                     }),
+
                 SelectFilter::make('tgl')
                     ->label('Filter by Tgl')
                     ->options(function () {
@@ -200,6 +227,9 @@ class CopackResource extends Resource implements HasShieldPermissions
                             })
                             ->toArray();
                     }),
+
+
+
 
             ])
             ->actions([

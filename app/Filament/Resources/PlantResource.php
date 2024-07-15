@@ -97,24 +97,34 @@ class PlantResource extends Resource implements HasShieldPermissions
                     ->searchable(),
                 Tables\Columns\TextColumn::make('kode_and_nama')
                     ->label('Kode Plant')
-                    ->searchable()
                     ->getStateUsing(function ($record) {
                         return $record->kode . ' - ' . $record->nama;
-                    }),
+                    })
+                    ->toggleable(isToggledHiddenByDefault: false),
 
-                // Tables\Columns\TextColumn::make('nama')
-                //     ->label('Plant')
-                //     ->searchable(),
+                Tables\Columns\TextColumn::make('kode')
+                    ->label('Kode')
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('nama')
+                    ->label('Plant')
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('kota')
                     ->searchable()
                     ->sortable(),
-                // Tables\Columns\TextColumn::make('alamat')
-                //     ->searchable(),
-                // Tables\Columns\TextColumn::make('pos')
-                //     ->label('Kode POS')
-                //     ->searchable(),
-                // Tables\Columns\TextColumn::make('telp')
-                //     ->searchable(),
+                Tables\Columns\TextColumn::make('alamat')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('pos')
+                    ->label('Kode POS')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('telp')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\IconColumn::make('is_aktif')
                     ->sortable()
                     ->boolean(),

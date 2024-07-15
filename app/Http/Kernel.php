@@ -65,4 +65,8 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'filament.access' => \App\Http\Middleware\CheckFilamentAccess::class,
     ];
+
+    protected $routeMiddleware = [
+        'checkPlantAccess' => \App\Http\Middleware\CheckPlantAccess::class,
+    ];
 }

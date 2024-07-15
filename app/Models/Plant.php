@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Helpers\EmailHelper;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Plant extends Model
 {
@@ -26,6 +27,12 @@ class Plant extends Model
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
+    }
+
+    // Relasi many-to-many dengan User
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class);
     }
 
     protected static function booted()

@@ -13,6 +13,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -67,7 +68,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
 
     public function canAccessPanel(Panel $panel): bool
     {
-        $allowedDomains = ['@club.co.id', '@aibm.co.id', '@ketikkan.com'];
+        $allowedDomains = ['@club.co.id', '@aibm.co.id', '@gmail.com', '@ketikkan.com'];
 
         foreach ($allowedDomains as $domain) {
             if (str_ends_with($this->email, $domain)) {
@@ -81,5 +82,18 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
     public function getFilamentAvatarUrl(): ?string
     {
         return $this->avatar_url;
+    }
+
+    // Relasi many-to-many dengan Plant
+    public function plants(): BelongsToMany
+    {
+        return $this->belongsToMany(Plant::class);
+    }
+
+    public function isAdmin()
+    {
+        // Misalnya, Anda memiliki kolom 'role' di tabel 'users'
+        // dan nilai 'admin' menandakan pengguna adalah admin
+        return $this->role === 'admin';
     }
 }

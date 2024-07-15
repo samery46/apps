@@ -4,6 +4,7 @@ namespace App\Filament\Resources\KaryawanResource\Pages;
 
 use App\Filament\Resources\KaryawanResource;
 use App\Imports\KaryawansImport;
+use App\Models\Karyawan;
 use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
@@ -56,4 +57,21 @@ class ListKaryawans extends ListRecords
     {
         return parent::getTableQuery()->where('is_aktif', true);
     }
+
+    // public function getTableQuery(): Builder
+    // {
+    //     $query = Karyawan::query()->where('is_aktif', true);
+
+    //     // Menerapkan filter berdasarkan akses plant_id pengguna
+    //     if (auth()->check() && auth()->user()->id === 1) {
+    //         // Jika user memiliki ID 1, dianggap sebagai admin
+    //         // Tidak ada filter tambahan yang diterapkan karena admin bisa mengakses semua plant
+    //     } else {
+    //         // Jika bukan user dengan ID 1, ambil plant yang dimiliki oleh user
+    //         $userPlantIds = auth()->user()->plants->pluck('id')->toArray();
+    //         $query->whereIn('plant_id', $userPlantIds);
+    //     }
+
+    //     return $query;
+    // }
 }
