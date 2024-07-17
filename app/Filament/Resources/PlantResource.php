@@ -38,7 +38,6 @@ class PlantResource extends Resource implements HasShieldPermissions
     {
         return $form
             ->schema([
-
                 Forms\Components\Group::make()
                     ->schema([
                         Forms\Components\Section::make('Plant')
@@ -89,7 +88,6 @@ class PlantResource extends Resource implements HasShieldPermissions
     {
         return $table
             ->columns([
-
                 Tables\Columns\TextColumn::make('company.kode')
                     ->label('Company')
                     ->numeric()
@@ -140,7 +138,7 @@ class PlantResource extends Resource implements HasShieldPermissions
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-            ])
+            ])->defaultSort('kode', 'asc')
             ->filters([
                 SelectFilter::make('company_id')
                     ->relationship('company', 'kode')

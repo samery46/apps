@@ -55,6 +55,11 @@ Route::get(
     [TemplateController::class, 'importMaterial']
 )->name('import-material');
 
+Route::get(
+    '/import-software',
+    [TemplateController::class, 'importSoftware']
+)->name('import-software');
+
 
 Route::get('/', function () {
     return redirect()->route('filament.admin.auth.login');

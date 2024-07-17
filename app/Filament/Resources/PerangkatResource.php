@@ -34,7 +34,7 @@ class PerangkatResource extends Resource implements HasShieldPermissions
 
     protected static ?string $navigationGroup = 'Master';
 
-    protected static ?int $navigationSort = 113;
+    protected static ?int $navigationSort = 114;
 
     public static function form(Form $form): Form
     {

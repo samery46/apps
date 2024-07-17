@@ -44,6 +44,11 @@ class Pinjam extends Model
         return $this->is_complete ? 'Sudah Dikembalikan' : 'Belum Dikembalikan';
     }
 
+    public function perangkat()
+    {
+        return $this->belongsTo(Perangkat::class);
+    }
+
     protected static function booted()
     {
 

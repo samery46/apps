@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Actions\BulkAction;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Auth;
 
 class AssetResource extends Resource implements HasShieldPermissions
 {
@@ -158,9 +159,13 @@ class AssetResource extends Resource implements HasShieldPermissions
                             ->image(),
                         Forms\Components\Toggle::make('is_aktif')
                             ->required(),
-                        // Forms\Components\TextInput::make('user_id')
-                        //     ->label('User Input')
-                        //     ->numeric(),
+                        Forms\Components\Select::make('user_id')
+                            ->label('User Penyerah')
+                            ->relationship('user', 'name', function ($query) {
+                                $query->whereIn('id', [2, 3, 4, 7]);
+                            })
+                            ->required()
+                            ->default(Auth::id()),
                     ])->columns(2),
             ]);
     }

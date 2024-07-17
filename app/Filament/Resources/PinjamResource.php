@@ -7,6 +7,7 @@ use App\Filament\Resources\PinjamResource\RelationManagers;
 use App\Models\Karyawan;
 use App\Models\Perangkat;
 use App\Models\Pinjam;
+use App\Models\PinjamPerangkat;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Carbon\Carbon;
 use Filament\Forms;
@@ -21,6 +22,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Tables\Filters\TernaryFilter;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class PinjamResource extends Resource implements HasShieldPermissions
 {
@@ -89,36 +91,65 @@ class PinjamResource extends Resource implements HasShieldPermissions
             ]);
     }
 
+    public static function getTableQuery(): Builder
+    {
+        return parent::getTableQuery()->with('items.perangkat');
+    }
+
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('karyawan.nama')
                     ->label('Nama')
+                    ->description(fn (Pinjam $record): string => ($record->karyawan->departemen->nama ?? '-'))
                     ->numeric()
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('tgl_pinjam')
-                    ->label('Pinjam')
-                    ->date()
+                    ->label('Pinjam|Kembali')
+                    ->description(
+                        fn (Pinjam $record): string =>
+                        $record->tgl_kembali ? Carbon::parse($record->tgl_kembali)
+                            ->translatedFormat('d F Y') : 'Belum Kembali'
+                    )
+                    ->formatStateUsing(fn ($state) => $state ? Carbon::parse($state)->translatedFormat('d F Y') : '-')
+                    // ->date()
+                    ->color('red')
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('tgl_kembali')
-                    ->label('Kembali')
-                    ->date()
-                    ->sortable()
-                    ->searchable(),
+                // Tables\Columns\TextColumn::make('tgl_pinjam')
+                //     ->label('Tgl Pinjam')
+                //     ->formatStateUsing(fn ($state) => $state ? Carbon::parse($state)->translatedFormat('d F Y') : '-')
+                //     ->sortable()
+                //     ->searchable()
+                //     ->toggleable(isToggledHiddenByDefault: true),
+                // Tables\Columns\TextColumn::make('tgl_kembali')
+                //     ->label('Tgl Kembali')
+                //     ->formatStateUsing(fn ($state) => $state ? Carbon::parse($state)->translatedFormat('d F Y') : '-')
+                //     ->sortable()
+                //     ->searchable()
+                //     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Penyerah')
                     ->numeric()
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\IconColumn::make('is_complete')
-                    ->label('Completed')
+                Tables\Columns\TextColumn::make('items.perangkat.nama')
+                    ->label('Perangkat')
+                    ->formatStateUsing(fn ($state) => Str::limit($state, 25))
+                    ->description(fn (Pinjam $record): string => ($record->keterangan ?? ''))
                     ->sortable()
-                    ->boolean(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('keterangan')
+                    ->label('Keterangan')
                     ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\IconColumn::make('is_complete')
+                    ->label('Done')
+                    ->sortable()
+                    ->boolean()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
