@@ -185,33 +185,69 @@ class AssetResource extends Resource implements HasShieldPermissions
                     ->label('No. Asset')
                     ->sortable()
                     ->searchable(),
+                Tables\Columns\TextColumn::make('sub')
+                    ->label('Sub Asset')
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('tipe')
                     ->label('Type')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('nama')
                     ->sortable()
                     ->searchable(),
+                Tables\Columns\TextColumn::make('tgl_perolehan')
+                    ->label('Tgl Perolehan')
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('harga')
+                    ->label('Harga')
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('serial_number')
                     ->label('Serial Number')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('karyawan.nama')
                     ->label('Pengguna')
                     ->sortable()
-                    ->searchable(),
-                // Tables\Columns\TextColumn::make('qty_sap')
-                //     ->label('Qty-SAP')
-                //     ->numeric()
-                //     ->sortable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: false),
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Status')
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('kondisi')
+                    ->label('Kondisi')
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('keterangan')
+                    ->label('Keterangan')
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('qty_sap')
+                    ->label('Qty-SAP')
+                    ->numeric()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('qty_aktual')
                     ->label('Qty-Aktual')
                     ->numeric()
-                    ->sortable(),
-                // Tables\Columns\IconColumn::make('is_aktif')
-                //     ->label('Aktif')
-                //     ->sortable()
-                //     ->boolean(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: false),
+                Tables\Columns\IconColumn::make('is_aktif')
+                    ->label('Aktif')
+                    ->sortable()
+                    ->boolean()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

@@ -32,7 +32,7 @@ class UidsapResource extends Resource implements HasShieldPermissions
 
     protected static ?string $navigationGroup = 'Master';
 
-    protected static ?int $navigationSort = 116;
+    protected static ?int $navigationSort = 117;
 
     public static function form(Form $form): Form
     {

@@ -2,12 +2,13 @@
 
 namespace App\Filament\Resources;
 
-use App\Exports\SoftwareExport;
-use App\Filament\Resources\SoftwareResource\Pages;
-use App\Filament\Resources\SoftwareResource\RelationManagers;
+use App\Exports\NetworkExport;
+use App\Filament\Resources\NetworkResource\Pages;
+use App\Filament\Resources\NetworkResource\RelationManagers;
+use App\Models\Departemen;
 use App\Models\Karyawan;
+use App\Models\Network;
 use App\Models\Plant;
-use App\Models\Software;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -21,61 +22,33 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 
-class SoftwareResource extends Resource
+class NetworkResource extends Resource
 {
-    protected static ?string $model = Software::class;
+    protected static ?string $model = Network::class;
 
-    protected static ?string $pluralModelLabel = 'Software';
+    protected static ?string $pluralModelLabel = 'Network';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $navigationGroup = 'Master';
 
-    protected static ?int $navigationSort = 116;
+    protected static ?int $navigationSort = 114;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Software')
+                Forms\Components\Section::make('IP Address')
                     ->description('Info Detail')
                     ->schema([
-                        Forms\Components\Select::make('nama')
-                            ->searchable()
-                            ->options([
-                                'AutoCAD' => [
-                                    'autocadlt' => 'AutoCAD LT',
-                                ],
-                                'Ms. Office' => [
-                                    'Office Pro Plus 2016' => 'Office Pro Plus 2016',
-                                    'Office Pro Plus 2019' => 'Office Pro Plus 2019',
-                                    'Office Std 2007' => 'Office Std 2007',
-                                    'Office Std 2013' => 'Office Std 2013',
-                                    'Office Std 2016' => 'Office Std 2016',
-                                    'Office Std 2019' => 'Office Std 2019',
-                                ],
-                                'Project' => [
-                                    'Project 2007' => 'Project 2007',
-                                    'Project 2016' => 'Project 2016',
-                                ],
-                                'Teamviewer' => [
-                                    'Teamviewer 10' => 'Teamviewer 10',
-                                ],
-                                'Visio' => [
-                                    'Visio Std 2013' => 'Visio Std 2013',
-                                    'Visio Std 2016' => 'Visio Std 2016',
-                                    'Visio Std 2019' => 'Visio Std 2019',
-                                ],
-                                'Windows' => [
-                                    'Windows 8.1 Pro' => 'Windows 8.1 Pro',
-                                ],
-                            ]),
-                        Forms\Components\DatePicker::make('tgl')
-                            ->label('Tanggal'),
-                        Forms\Components\TextInput::make('srf')
-                            ->label('Nomor SRF')
+                        Forms\Components\TextInput::make('segmen')
                             ->maxLength(255),
-
+                        Forms\Components\TextInput::make('ip')
+                            ->label('IP Address')
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('mac')
+                            ->label('Mac Address')
+                            ->maxLength(255),
                     ])->columns(3),
                 Forms\Components\Section::make('User')
                     ->description('Info Detail')
@@ -100,7 +73,6 @@ class SoftwareResource extends Resource
                                 $plant = Plant::find($value);
                                 return $plant ? $plant->kode . ' - ' . $plant->nama : null;
                             }),
-
                         Forms\Components\Select::make('karyawan_id')
                             ->label('Username')
                             ->placeholder('Cari NIK atau Nama User')
@@ -123,9 +95,9 @@ class SoftwareResource extends Resource
                             }),
                         Forms\Components\Textarea::make('keterangan')
                             ->autosize(),
+                        Forms\Components\Toggle::make('is_aktif')
+                            ->required(),
                     ])->columns(3),
-                Forms\Components\Toggle::make('is_aktif')
-                    ->required(),
                 Forms\Components\Hidden::make('user_id')
                     ->default(Auth::id())
                     ->required(),
@@ -142,37 +114,56 @@ class SoftwareResource extends Resource
                     ->getStateUsing(function ($record) {
                         return $record->plant->kode . ' - ' . $record->plant->nama;
                     }),
-                Tables\Columns\TextColumn::make('nama')
-                    ->label('Nama Software')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('tgl')
-                    ->date()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('srf')
-                    ->label('Nomor SRF')
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('segmen')
+                    ->label('Segmen')
+                    ->numeric()
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('ip')
+                    ->label('IP')
+                    ->numeric()
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: false),
+                Tables\Columns\TextColumn::make('segmen_and_ip')
+                    ->label('IP Address')
+                    ->getStateUsing(function ($record) {
+                        return $record->segmen . '.' . $record->ip;
+                    })
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('mac')
+                    ->label('Mac Address')
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('karyawan.nik')
                     ->label('NIK')
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('karyawan.nama')
-                    ->label('Nama')
-                    ->numeric()
+                    ->label('Nama User')
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('karyawan.job_title')
-                    ->label('Job Title')
-                    ->numeric()
-                    ->sortable()
-                    ->searchable()
+                Tables\Columns\TextColumn::make('departemen.kode')
+                    ->label('Departemen')
+                    ->getStateUsing(function ($record) {
+                        $karyawanId = $record->karyawan_id;
+                        $departemenId = optional(Karyawan::find($karyawanId))->departemen_id;
+                        $departemen = Departemen::find($departemenId);
+                        if ($departemen) {
+                            return $departemen->nama;
+                        }
+                        return '';
+                    })
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('keterangan')
                     ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\IconColumn::make('is_aktif')
-                    ->label('Aktif')
                     ->boolean()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -192,7 +183,7 @@ class SoftwareResource extends Resource
                     ->options(function () {
                         // if (auth()->check() && auth()->user()->id === 1) {
                         // Jika user memiliki ID 1, dianggap sebagai admin
-                        return Software::with('plant')
+                        return Network::with('plant')
                             ->get()
                             ->mapWithKeys(function ($item) {
                                 return [$item->plant_id => "{$item->plant->kode} - {$item->plant->nama}"];
@@ -229,9 +220,10 @@ class SoftwareResource extends Resource
                     ->action(function ($records) {
                         $recordIds = $records->pluck('id')->toArray();
                         $date = date('Y-m-d'); // Mendapatkan tanggal saat ini dalam format YYYY-MM-DD
-                        $fileName = "software-{$date}.xlsx"; // Menambahkan tanggal pada nama file
-                        return Excel::download(new SoftwareExport($recordIds), $fileName);
+                        $fileName = "network-{$date}.xlsx"; // Menambahkan tanggal pada nama file
+                        return Excel::download(new NetworkExport($recordIds), $fileName);
                     }),
+
             ]);
     }
 
@@ -245,9 +237,9 @@ class SoftwareResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListSoftware::route('/'),
-            'create' => Pages\CreateSoftware::route('/create'),
-            'edit' => Pages\EditSoftware::route('/{record}/edit'),
+            'index' => Pages\ListNetworks::route('/'),
+            'create' => Pages\CreateNetwork::route('/create'),
+            'edit' => Pages\EditNetwork::route('/{record}/edit'),
         ];
     }
 }

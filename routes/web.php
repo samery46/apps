@@ -60,6 +60,11 @@ Route::get(
     [TemplateController::class, 'importSoftware']
 )->name('import-software');
 
+Route::get(
+    '/import-network',
+    [TemplateController::class, 'importNetwork']
+)->name('import-network');
+
 
 Route::get('/', function () {
     return redirect()->route('filament.admin.auth.login');
