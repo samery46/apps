@@ -106,11 +106,6 @@ class AssetResource extends Resource implements HasShieldPermissions
 
                 Forms\Components\Group::make()
                     ->schema([
-
-                        // Forms\Components\TextInput::make('karyawan_id')
-                        //     ->label('User Pengguna')
-                        //     ->placeholder('Pilih user pengguna')
-                        //     ->numeric(),
                         Forms\Components\Select::make('karyawan_id')
                             ->label('Pengguna')
                             ->placeholder('Cari nama karyawan')
@@ -159,13 +154,9 @@ class AssetResource extends Resource implements HasShieldPermissions
                             ->image(),
                         Forms\Components\Toggle::make('is_aktif')
                             ->required(),
-                        Forms\Components\Select::make('user_id')
-                            ->label('User Penyerah')
-                            ->relationship('user', 'name', function ($query) {
-                                $query->whereIn('id', [2, 3, 4, 7]);
-                            })
-                            ->required()
-                            ->default(Auth::id()),
+                        Forms\Components\Hidden::make('user_id')
+                            ->default(fn () => Auth::id())
+                            ->required(),
                     ])->columns(2),
             ]);
     }
