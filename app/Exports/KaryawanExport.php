@@ -38,8 +38,8 @@ class KaryawanExport implements FromCollection, WithMapping, WithHeadings
             $karyawan->user_ad,
             $karyawan->computer_name,
             $karyawan->status,
-            $karyawan->plant_id ? $karyawan->plant->kode . ' - ' . $karyawan->plant->nama : 'N/A',
-            $karyawan->departemen_id ? $karyawan->departemen->kode . ' - ' .  $karyawan->departemen->nama : 'N/A',
+            $karyawan->plant_id ? $karyawan->plant->kode . ' - ' . $karyawan->plant->nama : '',
+            $karyawan->departemen_id ? $karyawan->departemen->kode . ' - ' .  $karyawan->departemen->nama : '',
             $karyawan->is_aktif ? 'Aktif' : 'Non Aktif',
         ];
     }

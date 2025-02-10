@@ -29,7 +29,7 @@ class KaryawanResource extends Resource implements HasShieldPermissions
 
     protected static ?string $pluralModelLabel = 'karyawan';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-identification';
 
     protected static ?string $navigationGroup = 'Master';
 
@@ -244,9 +244,9 @@ class KaryawanResource extends Resource implements HasShieldPermissions
                     ->falseLabel('Non Aktif')
                     ->placeholder('Semua')
                     ->queries(
-                        true: fn (Builder $query): Builder => $query->where('is_aktif', true),
-                        false: fn (Builder $query): Builder => $query->where('is_aktif', false),
-                        blank: fn (Builder $query): Builder => $query
+                        true: fn(Builder $query): Builder => $query->where('is_aktif', true),
+                        false: fn(Builder $query): Builder => $query->where('is_aktif', false),
+                        blank: fn(Builder $query): Builder => $query
                     ),
             ])
             ->actions([

@@ -32,7 +32,7 @@ class PlantExport implements FromCollection, WithMapping, WithHeadings
 
         return [
             $this->rowNumber, // Menambahkan nomor urut
-            $plant->company_id ? $plant->company->kode . ' - ' . $plant->company->nama : 'N/A',
+            $plant->company_id ? $plant->company->kode . ' - ' . $plant->company->nama : '',
             $plant->kode . ' - ' . $plant->nama,
             // $plant->nama,
             $plant->kota,

@@ -36,14 +36,14 @@ class NetworkExport implements FromCollection, WithMapping, WithHeadings
 
         return [
             $this->rowNumber, // Menambahkan nomor urut
-            $plantId ? $plantId->kode . ' - ' . $plantId->nama : 'N/A',
+            $plantId ? $plantId->kode . ' - ' . $plantId->nama : '',
             $network->segmen . '.' . $network->ip,
             $network->mac,
-            $network->karyawan_id ? $network->karyawan->nik : 'N/A',
-            $network->karyawan_id ? $network->karyawan->nama : 'N/A',
-            $network->karyawan_id ? $network->karyawan->job_title : 'N/A',
-            $network->karyawan_id ? $network->karyawan->email : 'N/A',
-            $deptId ? $deptId->kode . ' - ' . $deptId->nama : 'N/A',
+            $network->karyawan_id ? $network->karyawan->nik : '',
+            $network->karyawan_id ? $network->karyawan->nama : '',
+            $network->karyawan_id ? $network->karyawan->job_title : '',
+            $network->karyawan_id ? $network->karyawan->email : '',
+            $deptId ? $deptId->kode . ' - ' . $deptId->nama : '',
             $network->keterangan,
             $network->is_aktif ? 'Aktif' : 'Non Aktif',
         ];

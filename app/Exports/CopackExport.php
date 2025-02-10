@@ -33,15 +33,17 @@ class CopackExport implements FromCollection, WithMapping, WithHeadings
 
         return [
             $this->rowNumber,
-            $copack->plant_id ? $copack->plant->kode . ' - ' . $copack->plant->nama : 'N/A',
+            $copack->plant_id ? $copack->plant->kode . ' - ' . $copack->plant->nama : '',
             $copack->tgl,
-            $copack->material_id ? $copack->material->kategori_deskripsi : 'N/A',
-            $copack->material_id ? $copack->material->kode : 'N/A',
-            $copack->material_id ? $copack->material->nama : 'N/A',
+            $copack->material_id ? $copack->material->kategori_deskripsi : '',
+            $copack->material_id ? $copack->material->kode : '',
+            $copack->material_id ? $copack->material->nama : '',
             $copack->qty,
-            $copack->material_id ? $copack->material->uom : 'N/A',
+            $copack->material_id ? $copack->material->uom : '',
+            $copack->type_id ? $copack->type->nama : '',
+            $copack->vendor,
             $copack->keterangan,
-            $copack->user_id ? $copack->user->name : 'N/A',
+            $copack->user_id ? $copack->user->name : '',
         ];
     }
 
@@ -56,6 +58,8 @@ class CopackExport implements FromCollection, WithMapping, WithHeadings
             'Nama Material',
             'Quantity',
             'UoM',
+            'Type Transaksi',
+            'Vendor / Supplier',
             'Keterangan',
             'User Created ',
         ];

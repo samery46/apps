@@ -38,16 +38,16 @@ class SoftwareExport implements FromCollection, WithMapping, WithHeadings
 
         return [
             $this->rowNumber, // Menambahkan nomor urut
-            $companyId ? $companyId->kode : 'N/A',
-            $software->plant_id ? $software->plant->kode . ' - ' . $software->plant->nama  : 'N/A',
+            $companyId ? $companyId->kode : '',
+            $software->plant_id ? $software->plant->kode . ' - ' . $software->plant->nama  : '',
             $software->nama,
             $software->tgl,
             $software->srf,
-            $software->karyawan_id ? $software->karyawan->nik : 'N/A',
-            $software->karyawan_id ? $software->karyawan->nama : 'N/A',
-            $software->karyawan_id ? $software->karyawan->job_title : 'N/A',
-            $software->karyawan_id ? $software->karyawan->email : 'N/A',
-            $deptId ? $deptId->nama : 'N/A',
+            $software->karyawan_id ? $software->karyawan->nik : '',
+            $software->karyawan_id ? $software->karyawan->nama : '',
+            $software->karyawan_id ? $software->karyawan->job_title : '',
+            $software->karyawan_id ? $software->karyawan->email : '',
+            $deptId ? $deptId->nama : '',
             $software->keterangan,
             $software->is_aktif ? 'Aktif' : 'Non Aktif',
         ];

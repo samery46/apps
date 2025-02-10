@@ -30,7 +30,7 @@ class PinjamResource extends Resource implements HasShieldPermissions
 
     protected static ?string $pluralModelLabel = 'pinjam';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document';
 
     protected static ?string $navigationGroup = 'Transaksi';
 
@@ -102,34 +102,22 @@ class PinjamResource extends Resource implements HasShieldPermissions
             ->columns([
                 Tables\Columns\TextColumn::make('karyawan.nama')
                     ->label('Nama')
-                    ->description(fn (Pinjam $record): string => ($record->karyawan->departemen->nama ?? '-'))
+                    ->description(fn(Pinjam $record): string => ($record->karyawan->departemen->nama ?? '-'))
                     ->numeric()
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('tgl_pinjam')
                     ->label('Pinjam|Kembali')
                     ->description(
-                        fn (Pinjam $record): string =>
+                        fn(Pinjam $record): string =>
                         $record->tgl_kembali ? Carbon::parse($record->tgl_kembali)
                             ->translatedFormat('d F Y') : 'Belum Kembali'
                     )
-                    ->formatStateUsing(fn ($state) => $state ? Carbon::parse($state)->translatedFormat('d F Y') : '-')
+                    ->formatStateUsing(fn($state) => $state ? Carbon::parse($state)->translatedFormat('d F Y') : '-')
                     // ->date()
                     ->color('red')
                     ->sortable()
                     ->searchable(),
-                // Tables\Columns\TextColumn::make('tgl_pinjam')
-                //     ->label('Tgl Pinjam')
-                //     ->formatStateUsing(fn ($state) => $state ? Carbon::parse($state)->translatedFormat('d F Y') : '-')
-                //     ->sortable()
-                //     ->searchable()
-                //     ->toggleable(isToggledHiddenByDefault: true),
-                // Tables\Columns\TextColumn::make('tgl_kembali')
-                //     ->label('Tgl Kembali')
-                //     ->formatStateUsing(fn ($state) => $state ? Carbon::parse($state)->translatedFormat('d F Y') : '-')
-                //     ->sortable()
-                //     ->searchable()
-                //     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Penyerah')
                     ->numeric()
@@ -137,8 +125,8 @@ class PinjamResource extends Resource implements HasShieldPermissions
                     ->searchable(),
                 Tables\Columns\TextColumn::make('items.perangkat.nama')
                     ->label('Perangkat')
-                    ->formatStateUsing(fn ($state) => Str::limit($state, 25))
-                    ->description(fn (Pinjam $record): string => ($record->keterangan ?? ''))
+                    ->formatStateUsing(fn($state) => Str::limit($state, 25))
+                    ->description(fn(Pinjam $record): string => ($record->keterangan ?? ''))
                     ->sortable()
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -171,9 +159,9 @@ class PinjamResource extends Resource implements HasShieldPermissions
                     ->falseLabel('Non Complete')
                     ->placeholder('All')
                     ->queries(
-                        true: fn (Builder $query): Builder => $query->where('is_complete', true),
-                        false: fn (Builder $query): Builder => $query->where('is_complete', false),
-                        blank: fn (Builder $query): Builder => $query
+                        true: fn(Builder $query): Builder => $query->where('is_complete', true),
+                        false: fn(Builder $query): Builder => $query->where('is_complete', false),
+                        blank: fn(Builder $query): Builder => $query
                     ),
             ])
             ->actions([
@@ -208,7 +196,6 @@ class PinjamResource extends Resource implements HasShieldPermissions
         return Repeater::make('items')
             ->relationship()
             ->schema([
-
                 Forms\Components\Select::make('perangkat_id')
                     ->label('Perangkat')
                     // ->options(Perangkat::query()->pluck('nama', 'id'))
@@ -236,16 +223,6 @@ class PinjamResource extends Resource implements HasShieldPermissions
                         'md' => 5,
                     ])
                     ->searchable(),
-
-                // Forms\Components\TextInput::make('serial_number')
-                //     ->label('Serial Number')
-                //     ->disabled()
-                //     ->dehydrated()
-                //     // ->numeric()
-                //     ->required()
-                //     ->columnSpan([
-                //         'md' => 3,
-                //     ]),
             ])
             ->extraItemActions([
                 Action::make('openPerangkat')
@@ -259,7 +236,7 @@ class PinjamResource extends Resource implements HasShieldPermissions
                         }
                         return PerangkatResource::getUrl('edit', ['record' => $perangkat]);
                     }, shouldOpenInNewTab: true)
-                    ->hidden(fn (array $arguments, Repeater $component): bool => blank($component->getRawItemState($arguments['item'])['perangkat_id'])),
+                    ->hidden(fn(array $arguments, Repeater $component): bool => blank($component->getRawItemState($arguments['item'])['perangkat_id'])),
             ])
             ->defaultItems(1)
             ->hiddenLabel()

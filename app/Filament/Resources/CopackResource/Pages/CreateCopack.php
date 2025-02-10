@@ -14,4 +14,8 @@ class CreateCopack extends CreateRecord
     {
         return 'Create Stock Copack';
     }
+    public static function created($record)
+    {
+        return redirect()->route('filament.admin.resources.copacks.index'); // Redirect to the list page
+    }
 }

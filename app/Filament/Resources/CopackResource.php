@@ -8,6 +8,7 @@ use App\Filament\Resources\CopackResource\RelationManagers;
 use App\Models\Copack;
 use App\Models\Material;
 use App\Models\Plant;
+use App\Models\Type;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Carbon\Carbon;
 use Filament\Forms;
@@ -19,9 +20,11 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Hidden;
+use Filament\Navigation\NavigationGroup;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Filters\SelectFilter;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Redirect;
 
 
 class CopackResource extends Resource implements HasShieldPermissions
@@ -30,11 +33,15 @@ class CopackResource extends Resource implements HasShieldPermissions
 
     protected static ?string $pluralModelLabel = 'stock copack';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-truck';
 
     protected static ?string $navigationGroup = 'Transaksi';
 
-    protected static ?int $navigationSort = 132;
+    // protected static ?string $navigationGroup = 'Copack';
+
+    protected static ?int $navigationSort = 138;
+
+    // protected static ?int $navigationSort = 101;
 
     public static function form(Form $form): Form
     {
@@ -44,51 +51,61 @@ class CopackResource extends Resource implements HasShieldPermissions
                     ->description('Nama Copacker')
                     ->schema([
                         Forms\Components\Select::make('plant_id')
-                            ->label('Copacker')
-                            ->placeholder('Cari kode atau nama Copack')
+                            ->label('Plant')
+                            ->placeholder('Ketik kode atau nama plant')
                             ->required()
                             ->searchable()
+                            ->columnSpan(3)
                             ->preload()
                             ->getSearchResultsUsing(function (string $search) {
-                                // return Plant::where('nama', 'like', "%{$search}%")
                                 return Plant::where(function ($query) use ($search) {
                                     $query->where('nama', 'like', "%{$search}%")
-                                        ->orWhere('kode', 'like', "%{$search}%"); // Tambahkan pencarian juga berdasarkan 'kode'
+                                        ->orWhere('kode', 'like', "%{$search}%");
                                 })
-                                    // ->limit(5)
-                                    ->get(['kode', 'nama', 'id']) // Ambil kolom kode, nama, dan id
+                                    ->whereIn('id', auth()->user()->plants->pluck('id')) // Filter berdasarkan hak akses user
+                                    ->get(['kode', 'nama', 'id'])
                                     ->mapWithKeys(function ($plant) {
-                                        return [$plant->id => $plant->kode . ' - ' . $plant->nama]; // Format opsi dengan kode - nama
+                                        return [$plant->id => $plant->kode . ' - ' . $plant->nama];
                                     })
                                     ->toArray();
                             })
                             ->getOptionLabelUsing(function ($value) {
                                 $plant = Plant::find($value);
-                                return $plant ? $plant->kode . ' - ' . $plant->nama : null; // Format label dengan kode - nama
+                                return $plant ? $plant->kode . ' - ' . $plant->nama : null;
                             }),
+
+
                         Forms\Components\DatePicker::make('tgl')
                             ->label('Tanggal')
                             ->default(Carbon::today()->format('Y-m-d'))
+                            ->columnSpan(2)
                             ->required(),
                     ])
-                    ->columns(3)
+                    ->columns(8)
                     ->collapsible(),
                 Forms\Components\Section::make('Material')
                     ->description('Detail Material')
                     ->schema([
+
                         Forms\Components\Select::make('material_id')
                             ->label('Kode Material')
                             ->placeholder('Cari kode atau nama material')
                             ->required()
                             ->searchable()
+                            ->columnSpan(3)
                             ->preload()
                             ->getSearchResultsUsing(function (string $search) {
-                                // return Plant::where('nama', 'like', "%{$search}%")
-                                return Material::where(function ($query) use ($search) {
-                                    $query->where('nama', 'like', "%{$search}%")
-                                        ->orWhere('kode', 'like', "%{$search}%"); // Tambahkan pencarian juga berdasarkan 'kode'
+                                // Ambil plant yang bisa diakses oleh user
+                                $userPlantIds = auth()->user()->plants->pluck('id');
+
+                                // Ambil material yang terkait dengan plant yang bisa diakses oleh user
+                                return Material::whereHas('plants', function ($query) use ($userPlantIds) {
+                                    $query->whereIn('plants.id', $userPlantIds); // Gunakan alias untuk 'plants.id'
                                 })
-                                    // ->limit(5)
+                                    ->where(function ($query) use ($search) {
+                                        $query->where('nama', 'like', "%{$search}%")
+                                            ->orWhere('kode', 'like', "%{$search}%"); // Pencarian berdasarkan nama atau kode
+                                    })
                                     ->get(['kode', 'nama', 'id']) // Ambil kolom kode, nama, dan id
                                     ->mapWithKeys(function ($material) {
                                         return [$material->id => $material->kode . ' - ' . $material->nama]; // Format opsi dengan kode - nama
@@ -98,17 +115,153 @@ class CopackResource extends Resource implements HasShieldPermissions
                             ->getOptionLabelUsing(function ($value) {
                                 $material = Material::find($value);
                                 return $material ? $material->kode . ' - ' . $material->nama : null; // Format label dengan kode - nama
+                            })
+                            ->reactive() // Memicu reactivity ketika material dipilih
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                if ($state) {
+                                    $material = Material::find($state);
+                                    if ($material) {
+                                        $set('kategori', $material->kategori); // Mengisi Kategori
+                                        $set('uom', $material->uom); // Mengisi UoM
+                                    }
+                                }
                             }),
+
+
+                        // ini untuk menambahkan material_id
+                        // Forms\Components\Select::make('material_id')
+                        //     ->label('Kode Material')
+                        //     ->placeholder('Cari kode atau nama material')
+                        //     ->required()
+                        //     ->searchable()
+                        //     ->columnSpan(3)
+                        //     ->preload()
+                        //     ->getSearchResultsUsing(function (string $search) {
+                        //         // return Plant::where('nama', 'like', "%{$search}%")
+                        //         return Material::where(function ($query) use ($search) {
+                        //             $query->where('nama', 'like', "%{$search}%")
+                        //                 ->orWhere('kode', 'like', "%{$search}%"); // Tambahkan pencarian juga berdasarkan 'kode'
+                        //         })
+                        //             // ->limit(5)
+                        //             ->get(['kode', 'nama', 'id']) // Ambil kolom kode, nama, dan id
+                        //             ->mapWithKeys(function ($material) {
+                        //                 return [$material->id => $material->kode . ' - ' . $material->nama]; // Format opsi dengan kode - nama
+                        //             })
+                        //             ->toArray();
+                        //     })
+                        //     ->getOptionLabelUsing(function ($value) {
+                        //         $material = Material::find($value);
+                        //         return $material ? $material->kode . ' - ' . $material->nama : null; // Format label dengan kode - nama
+                        //     })
+
+                        //     ->reactive() // Memicu reactivity ketika asset dipilih
+                        //     ->afterStateUpdated(function ($state, callable $set) {
+                        //         if ($state) {
+                        //             $material = Material::find($state);
+                        //             if ($material) {
+                        //                 $set('kategori', $material->kategori); // Mengisi Kategori
+                        //                 $set('uom', $material->uom); // Mengisi UoM
+                        //             }
+                        //         }
+                        //     }),
+
+                        // sampai disini
+
+
+
+                        // Forms\Components\TextInput::make('kategori')
+                        //     ->label('Kategori')
+                        //     ->disabled()
+                        //     ->afterStateHydrated(function ($state, callable $set, $record) {
+                        //         if ($record && $record->material) {
+                        //             $kategori = $record->material->kategori;
+                        //             $set('kategori', $kategori === 1 ? 'FG' : ($kategori === 2 ? 'RM' : 'Lainnya'));
+                        //         }
+                        //     })
+                        //     ->afterStateUpdated(function ($state, callable $set) {
+                        //         if ($state) {
+                        //             $set('kategori', $state === 1 ? 'FG' : ($state === 2 ? 'RM' : 'Lainnya'));
+                        //         }
+                        //     }),
+
+                        Forms\Components\TextInput::make('kategori')
+                            ->label('Kategori')
+                            ->disabled()
+                            ->hidden() // Menyembunyikan kolom dari tampilan
+                            ->afterStateHydrated(function ($state, callable $set, $record) {
+                                if ($record && $record->material) {
+                                    $set('kategori', $record->material->kategori);
+                                }
+                            }),
+                        Forms\Components\TextInput::make('uom')
+                            ->label('UoM')
+                            ->disabled()
+                            ->columnSpan(1)
+                            ->afterStateHydrated(function ($state, callable $set, $record) {
+                                if ($record && $record->material) {
+                                    $set('uom', $record->material->uom);
+                                }
+                            }),
+
                         Forms\Components\TextInput::make('qty')
                             ->label('Quantity')
+                            ->columnSpan(2)
                             ->numeric(),
+
+                        // Forms\Components\Select::make('type_id')
+                        //     ->label('Type')
+                        //     ->relationship('type', 'nama', function ($query) {
+                        //         // Menambahkan kondisi hanya mengambil tipe yang aktif
+                        //         $query->where('is_aktif', true);
+                        //     }) // Relasi ke tabel type
+                        //     ->searchable()
+                        //     ->required(),
+
+                        Forms\Components\Select::make('type_id')
+                            ->label('Type')
+                            ->columnSpan(2)
+                            ->options(function (callable $get) {
+                                // Ambil nilai kategori
+                                $kategori = $get('kategori');
+
+                                if ($kategori == 1) { // Jika kategori adalah 1 (FG)
+                                    // return Type::whereIn('id', [3, 4, 5, 10])
+                                    return Type::where('keterangan', 1) // Sesuaikan nilai keterangan
+                                        ->where('is_aktif', true) // Tambahkan kondisi is_aktif = true
+                                        ->orderBy('nama', 'asc') // Urutkan berdasarkan nama secara ascending
+                                        ->pluck('nama', 'id')
+                                        ->toArray();
+                                } elseif ($kategori == 2) { // Jika kategori adalah 2 (RM)
+                                    // return Type::whereNotIn('id', [3, 4, 5, 10])
+                                    return Type::where('keterangan', 2) // Sesuaikan nilai keterangan
+                                        ->where('is_aktif', true) // Tambahkan kondisi is_aktif = true
+                                        ->orderBy('nama', 'asc') // Urutkan berdasarkan nama secara ascending
+                                        ->pluck('nama', 'id')
+                                        ->toArray();
+                                }
+
+                                // Default: semua tipe yang aktif
+                                return Type::where('is_aktif', true)
+                                    ->orderBy('nama', 'asc') // Urutkan berdasarkan nama secara ascending
+                                    ->pluck('nama', 'id')
+                                    ->toArray();
+                            })
+                            ->reactive() // Membuat elemen ini responsif terhadap perubahan kategori
+                            ->required(),
+
+                        Forms\Components\TextInput::make('vendor')
+                            ->label('Vendor / Supplier')
+                            ->columnSpan(4)
+                            ->maxLength(255),
                         Forms\Components\TextInput::make('keterangan')
+                            ->label('Keterangan')
+                            ->columnSpan(4)
                             ->maxLength(255),
                     ])
-                    ->columns(3)
+                    ->columns(8)
                     ->collapsible(),
                 Forms\Components\Hidden::make('user_id')
-                    ->default(fn () => Auth::id())
+                    ->default(fn() => Auth::id())
                     ->required(),
             ]);
     }
@@ -148,12 +301,25 @@ class CopackResource extends Resource implements HasShieldPermissions
                 Tables\Columns\TextColumn::make('material.uom')
                     ->label('UoM')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: false),
+                Tables\Columns\TextColumn::make('type.nama')
+                    ->label('Type')
+                    ->searchable()
+                    ->getStateUsing(function ($record) {
+                        return $record->type->nama;
+                    })
+                    ->toggleable(isToggledHiddenByDefault: false),
+                Tables\Columns\TextColumn::make('vendor')
+                    ->label('Vendor / Supplier')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('keterangan')
+                    ->label('Keterangan')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('user.name')
-                    ->label('User Create')
+                    ->label('Create By')
                     ->numeric()
                     ->sortable()
                     ->searchable()
@@ -228,8 +394,16 @@ class CopackResource extends Resource implements HasShieldPermissions
                             ->toArray();
                     }),
 
-
-
+                SelectFilter::make('type_id')
+                    ->label('Filter by Type')
+                    ->options(function () {
+                        return Copack::with('type')
+                            ->get()
+                            ->mapWithKeys(function ($item) {
+                                return [$item->type_id => $item->type->nama];
+                            })
+                            ->toArray();
+                    }),
 
             ])
             ->actions([

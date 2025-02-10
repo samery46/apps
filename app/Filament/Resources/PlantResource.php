@@ -55,7 +55,8 @@ class PlantResource extends Resource implements HasShieldPermissions
                                     ->required()
                                     ->length(4),
                                 Forms\Components\TextInput::make('nama')
-                                    ->maxLength(255),
+                                    ->maxLength(255)
+                                    ->columnSpan(2),
                             ])->columns(2),
                     ]),
 
@@ -66,17 +67,22 @@ class PlantResource extends Resource implements HasShieldPermissions
                             ->schema([
 
                                 Forms\Components\Textarea::make('alamat')
-                                    ->autosize(),
+                                    ->autosize()
+                                    ->columnSpan(2),
                                 Forms\Components\TextInput::make('kota')
+                                    ->columnSpan(1)
                                     ->maxLength(255),
                                 Forms\Components\TextInput::make('pos')
                                     ->label('Kode POS')
+                                    ->columnSpan(1)
                                     ->length(5),
                                 Forms\Components\TextInput::make('telp')
                                     ->tel()
+                                    ->columnSpan(1)
                                     ->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/'),
                                 Forms\Components\Toggle::make('is_aktif')
                                     ->required()
+                                    ->columnSpan(1)
                                     ->hiddenOn('create')
                             ])->columns(2),
 
@@ -151,9 +157,9 @@ class PlantResource extends Resource implements HasShieldPermissions
                     ->falseLabel('Non Aktif')
                     ->placeholder('Semua')
                     ->queries(
-                        true: fn (Builder $query): Builder => $query->where('is_aktif', true),
-                        false: fn (Builder $query): Builder => $query->where('is_aktif', false),
-                        blank: fn (Builder $query): Builder => $query
+                        true: fn(Builder $query): Builder => $query->where('is_aktif', true),
+                        false: fn(Builder $query): Builder => $query->where('is_aktif', false),
+                        blank: fn(Builder $query): Builder => $query
                     ),
             ])
             ->actions([

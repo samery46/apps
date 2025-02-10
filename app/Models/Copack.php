@@ -16,6 +16,8 @@ class Copack extends Model
         'plant_id',
         'material_id',
         'qty',
+        'type_id',
+        'vendor',
         'keterangan',
         'user_id'
     ];
@@ -23,6 +25,11 @@ class Copack extends Model
     public function plant(): BelongsTo
     {
         return $this->belongsTo(Plant::class);
+    }
+
+    public function type(): BelongsTo
+    {
+        return $this->belongsTo(Type::class);
     }
 
     public function user(): BelongsTo

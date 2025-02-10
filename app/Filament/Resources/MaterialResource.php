@@ -6,7 +6,9 @@ use App\Exports\MaterialExport;
 use App\Filament\Resources\MaterialResource\Pages;
 use App\Filament\Resources\MaterialResource\RelationManagers;
 use App\Models\Material;
+use App\Models\Plant;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -64,16 +66,61 @@ class MaterialResource extends Resource implements HasShieldPermissions
                             ->required()
                             ->hiddenOn('create'),
                         Forms\Components\Hidden::make('user_id')
-                            ->default(fn () => Auth::id())
+                            ->default(fn() => Auth::id())
                             ->required(),
+
+
                     ])
                     ->columns(2)
                     ->collapsible(),
+
+                Forms\Components\Section::make('Plant')
+                    ->description('Akses Plant')
+                    ->schema([
+                        Forms\Components\Checkbox::make('select_all_plants')
+                            ->label('Akses All Plant')
+                            ->reactive()
+                            ->afterStateUpdated(function (callable $set, $state) {
+                                if ($state) {
+                                    // Centang semua checkbox jika "Akses All" dicentang
+                                    $set('plants', \App\Models\Plant::all()->pluck('id')->toArray());
+                                } else {
+                                    // Kosongkan semua checkbox jika "Akses All" tidak dicentang
+                                    $set('plants', []);
+                                }
+                            }),
+
+                        Forms\Components\CheckboxList::make('plants')
+                            ->relationship('plants', 'nama')
+                            ->options(function () {
+                                return \App\Models\Plant::all()
+                                    ->sortBy('kode')
+                                    ->mapWithKeys(function ($plant) {
+                                        return [$plant->id => "{$plant->kode} - {$plant->nama}"];
+                                    })->toArray();
+                            })
+                            ->label('Plants')
+                            ->columns(4), // Untuk menampilkan checkbox dalam dua kolom,
+                    ])
             ]);
     }
 
     public static function table(Table $table): Table
     {
+
+        // $plantOptions = Plant::all()->pluck('kode', 'id');
+
+        // $plantOptions = Plant::whereIn('id', [39, 40, 41])->pluck('kode', 'id');
+        // $selectedDate = request()->get('tgl', Carbon::now()->toDateString());
+
+        // Filter plantOptions untuk hanya menampilkan plant dengan stok lebih dari 0
+        // $filteredPlantOptions = array_filter($plantOptions->toArray(), function ($plantKode, $plantId) use ($selectedDate) {
+        //     // Ambil objek Material pertama untuk contoh, atau sesuaikan sesuai kebutuhan
+        //     $material = Material::first(); // Pastikan ada data Material
+        //     return $material->getStokPerPlantDanTanggal($plantId, $selectedDate) > 0;
+        // }, ARRAY_FILTER_USE_BOTH);
+
+
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('kode')
@@ -94,11 +141,47 @@ class MaterialResource extends Resource implements HasShieldPermissions
                     ->label('UoM')
                     ->sortable()
                     ->searchable(),
+                // Tables\Columns\TextColumn::make('group')
+                //     ->sortable()
+                //     ->searchable(),
+
+                // Tables\Columns\TextColumn::make('stok')
+                //     ->label('Stok')
+                //     ->sortable()
+                //     ->getStateUsing(fn (Material $record) => $record->stok),
+
+                // ...array_map(function ($plantId, $plantKode) {
+                //     return Tables\Columns\TextColumn::make("stok_plant_{$plantId}")
+                //         ->label("Stok $plantKode")
+                //         ->getStateUsing(fn (Material $record) => $record->getStokPerPlant($plantId));
+                // }, array_keys($plantOptions->toArray()), $plantOptions->toArray()),
+
+
+                // ini yang terakhir bisa
+                // ...array_map(function ($plantId, $plantKode) use ($selectedDate) {
+                //     return Tables\Columns\TextColumn::make("stok_plant_{$plantId}")
+                //         ->label("$plantKode")
+                //         ->getStateUsing(fn (Material $record) => $record->getStokPerPlantDanTanggal($plantId, $selectedDate));
+                // }, array_keys($plantOptions->toArray()), $plantOptions->toArray()),
+                // Sampai sini
+
+
+                // ...array_map(function ($plantId, $plantKode) use ($selectedDate) {
+                //     return TextColumn::make("stok_plant_{$plantId}")
+                //         ->label("$plantKode")
+                //         ->getStateUsing(fn (Material $record) => $record->getStokPerPlantDanTanggal($plantId, $selectedDate));
+                // }, array_keys($filteredPlantOptions), $filteredPlantOptions),
+
                 Tables\Columns\TextColumn::make('group')
+                    ->searchable()
                     ->sortable()
-                    ->searchable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('plants.kode')
+                    ->label('Plant')
+                    ->formatStateUsing(fn($state) => is_array($state) ? implode(', ', $state) : ($state ?? '-')),
                 Tables\Columns\IconColumn::make('is_aktif')
-                    ->boolean(),
+                    ->boolean()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('keterangan')
                     ->searchable()
                     ->sortable()
@@ -117,6 +200,17 @@ class MaterialResource extends Resource implements HasShieldPermissions
                     ->toggleable(isToggledHiddenByDefault: true),
             ])->defaultSort('kode', 'asc')
             ->filters([
+
+                Tables\Filters\Filter::make('tgl')
+                    ->form([
+                        Forms\Components\DatePicker::make('tgl')
+                            ->label('Tanggal')
+                            ->default(Carbon::now()->toDateString())
+                            ->required(),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query;
+                    }),
 
                 SelectFilter::make('kategori')
                     ->label('Filter by Kategori')
@@ -137,9 +231,9 @@ class MaterialResource extends Resource implements HasShieldPermissions
                     ->falseLabel('Non Aktif')
                     ->placeholder('Semua')
                     ->queries(
-                        true: fn (Builder $query): Builder => $query->where('is_aktif', true),
-                        false: fn (Builder $query): Builder => $query->where('is_aktif', false),
-                        blank: fn (Builder $query): Builder => $query
+                        true: fn(Builder $query): Builder => $query->where('is_aktif', true),
+                        false: fn(Builder $query): Builder => $query->where('is_aktif', false),
+                        blank: fn(Builder $query): Builder => $query
                     ),
 
             ])

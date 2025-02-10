@@ -35,6 +35,11 @@ class Plant extends Model
         return $this->belongsToMany(User::class);
     }
 
+    public function copackers()
+    {
+        return $this->hasMany(Copacker::class);
+    }
+
     protected static function booted()
     {
         static::created(function ($plant) {
@@ -61,5 +66,9 @@ class Plant extends Model
 
             EmailHelper::sendEmail($to, $cc, $subject, $body, $toName, $ccName, $fromName);
         });
+    }
+    public function materials()
+    {
+        return $this->belongsToMany(Material::class, 'material_plant');
     }
 }

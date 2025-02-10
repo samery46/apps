@@ -39,4 +39,93 @@ class Material extends Model
                 return 'Unknown';
         }
     }
+
+    // public function getKategoriLabelAttribute()
+    // {
+    //     return $this->kategori === 1 ? 'FG' : ($this->kategori === 2 ? 'RM' : 'Lainnya');
+    // }
+
+    public function copackers()
+    {
+        return $this->hasMany(Copacker::class);
+    }
+
+    public function copackerMaterials()
+    {
+        return $this->hasMany(CopackerMaterial::class);
+    }
+
+    // public function getStokAttribute()
+    // {
+    //     $masuk = $this->copackerMaterials()
+    //         ->whereHas('copacker', function ($query) {
+    //             $query->whereHas('typeTransaksi', function ($query) {
+    //                 $query->where('kategori', 'Masuk');
+    //             });
+    //         })
+    //         ->sum('qty');
+
+    //     $keluar = $this->copackerMaterials()
+    //         ->whereHas('copacker', function ($query) {
+    //             $query->whereHas('typeTransaksi', function ($query) {
+    //                 $query->where('kategori', 'Keluar');
+    //             });
+    //         })
+    //         ->sum('qty');
+
+    //     return $masuk - $keluar;
+    // }
+
+    // public function getStokPerPlant($plantId)
+    // {
+    //     $masuk = $this->copackerMaterials()
+    //         ->whereHas('copacker', function ($query) use ($plantId) {
+    //             $query->where('plant_id', $plantId)
+    //                 ->whereHas('typeTransaksi', function ($query) {
+    //                     $query->where('kategori', 'Masuk');
+    //                 });
+    //         })
+    //         ->sum('qty');
+
+    //     $keluar = $this->copackerMaterials()
+    //         ->whereHas('copacker', function ($query) use ($plantId) {
+    //             $query->where('plant_id', $plantId)
+    //                 ->whereHas('typeTransaksi', function ($query) {
+    //                     $query->where('kategori', 'Keluar');
+    //                 });
+    //         })
+    //         ->sum('qty');
+
+    //     return $masuk - $keluar;
+    // }
+
+    public function getStokPerplantDanTanggal($plantId, $tgl)
+    {
+        $masuk = $this->copackerMaterials()
+            ->whereHas('copacker', function ($query) use ($plantId, $tgl) {
+                $query->where('plant_id', $plantId)
+                    ->whereDate('tgl', '<=', $tgl)
+                    ->whereHas('typeTransaksi', function ($query) {
+                        $query->where('kategori', 'Masuk');
+                    });
+            })
+            ->sum('qty');
+
+        $keluar = $this->copackerMaterials()
+            ->whereHas('copacker', function ($query) use ($plantId, $tgl) {
+                $query->where('plant_id', $plantId)
+                    ->whereDate('tgl', '<=', $tgl)
+                    ->whereHas('typeTransaksi', function ($query) {
+                        $query->where('kategori', 'Keluar');
+                    });
+            })
+            ->sum('qty');
+
+        return $masuk - $keluar;
+    }
+
+    public function plants()
+    {
+        return $this->belongsToMany(Plant::class, 'material_plant');
+    }
 }

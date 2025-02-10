@@ -48,4 +48,9 @@ class Karyawan extends Model
     {
         static::addGlobalScope(new ActiveKaryawanScope);
     }
+
+    public function usages()
+    {
+        return $this->hasMany(AssetUsage::class);
+    }
 }

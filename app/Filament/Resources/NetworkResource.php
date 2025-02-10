@@ -9,6 +9,7 @@ use App\Models\Departemen;
 use App\Models\Karyawan;
 use App\Models\Network;
 use App\Models\Plant;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -21,18 +22,31 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Models\User;
 
-class NetworkResource extends Resource
+
+class NetworkResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Network::class;
 
     protected static ?string $pluralModelLabel = 'Network';
-
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
+    protected static ?string $navigationIcon = 'heroicon-o-link';
     protected static ?string $navigationGroup = 'Master';
-
     protected static ?int $navigationSort = 114;
+
+    // protected static ?string $navigationIcon = null;
+    // protected static ?string $navigationGroup = null;
+    // protected static ?int $navigationSort = null;
+
+    // public static function canViewNavigation(): bool
+    // {
+    //     return auth()->user()?->hasRole('super_admin'); // Tampilkan hanya untuk role admin
+    // }
+
+    public static function canViewNavigation(): bool
+    {
+        return false; // Sembunyikan resource dari navigasi
+    }
 
     public static function form(Form $form): Form
     {
@@ -200,9 +214,9 @@ class NetworkResource extends Resource
                     ->falseLabel('Non Aktif')
                     ->placeholder('All')
                     ->queries(
-                        true: fn (Builder $query): Builder => $query->where('is_aktif', true),
-                        false: fn (Builder $query): Builder => $query->where('is_aktif', false),
-                        blank: fn (Builder $query): Builder => $query
+                        true: fn(Builder $query): Builder => $query->where('is_aktif', true),
+                        false: fn(Builder $query): Builder => $query->where('is_aktif', false),
+                        blank: fn(Builder $query): Builder => $query
                     ),
             ])
             ->actions([
@@ -240,6 +254,18 @@ class NetworkResource extends Resource
             'index' => Pages\ListNetworks::route('/'),
             'create' => Pages\CreateNetwork::route('/create'),
             'edit' => Pages\EditNetwork::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any'
         ];
     }
 }

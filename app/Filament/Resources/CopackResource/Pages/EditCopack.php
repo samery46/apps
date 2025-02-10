@@ -16,4 +16,9 @@ class EditCopack extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+
+    public static function updated($record)
+    {
+        return redirect()->route('filament.admin.resources.copacks.index'); // Redirect to the list page
+    }
 }

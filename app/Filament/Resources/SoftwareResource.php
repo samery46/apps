@@ -26,12 +26,13 @@ class SoftwareResource extends Resource
     protected static ?string $model = Software::class;
 
     protected static ?string $pluralModelLabel = 'Software';
-
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
+    protected static ?string $navigationIcon = 'heroicon-o-cube';
     protected static ?string $navigationGroup = 'Master';
-
     protected static ?int $navigationSort = 116;
+
+    // protected static ?string $navigationIcon = null;
+    // protected static ?string $navigationGroup = null;
+    // protected static ?int $navigationSort = null;
 
     public static function form(Form $form): Form
     {
@@ -209,9 +210,9 @@ class SoftwareResource extends Resource
                     ->falseLabel('Non Aktif')
                     ->placeholder('All')
                     ->queries(
-                        true: fn (Builder $query): Builder => $query->where('is_aktif', true),
-                        false: fn (Builder $query): Builder => $query->where('is_aktif', false),
-                        blank: fn (Builder $query): Builder => $query
+                        true: fn(Builder $query): Builder => $query->where('is_aktif', true),
+                        false: fn(Builder $query): Builder => $query->where('is_aktif', false),
+                        blank: fn(Builder $query): Builder => $query
                     ),
             ])
             ->actions([

@@ -6,6 +6,7 @@ use App\Exports\AssetExport;
 use App\Filament\Resources\AssetResource\Pages;
 use App\Filament\Resources\AssetResource\RelationManagers;
 use App\Models\Asset;
+use App\Models\Company;
 use App\Models\Karyawan;
 use App\Models\Plant;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
@@ -28,7 +29,7 @@ class AssetResource extends Resource implements HasShieldPermissions
 
     protected static ?string $pluralModelLabel = 'asset';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-cube';
 
     protected static ?string $navigationGroup = 'Master';
 
@@ -106,26 +107,39 @@ class AssetResource extends Resource implements HasShieldPermissions
 
                 Forms\Components\Group::make()
                     ->schema([
-                        Forms\Components\Select::make('karyawan_id')
+
+                        Forms\Components\Hidden::make('karyawan_id')
+                            ->default(fn($record) => $record?->karyawan_id),
+                        Forms\Components\TextInput::make('name')
                             ->label('Pengguna')
-                            ->placeholder('Cari nama karyawan')
-                            ->required()
-                            ->searchable()
-                            ->preload()
-                            ->getSearchResultsUsing(function (string $search) {
-                                return Karyawan::where(function ($query) use ($search) {
-                                    $query->where('nama', 'like', "%{$search}%");
-                                })
-                                    ->get(['nama', 'id'])
-                                    ->mapWithKeys(function ($karyawan) {
-                                        return [$karyawan->id => $karyawan->nama];
-                                    })
-                                    ->toArray();
-                            })
-                            ->getOptionLabelUsing(function ($value) {
-                                $karyawan = Karyawan::find($value);
-                                return $karyawan ? $karyawan->nama : null;
+                            ->disabled()
+                            ->afterStateHydrated(function ($state, callable $set, $record) {
+                                // Jika ada record dan memiliki relasi karyawan, tampilkan nama karyawan
+                                if ($record && $record->karyawan) {
+                                    $set('name', $record->karyawan->nama);
+                                }
                             }),
+
+                        // Forms\Components\Select::make('karyawan_id')
+                        //     ->label('Pengguna')
+                        //     ->placeholder('Cari nama karyawan')
+                        //     ->required()
+                        //     ->searchable()
+                        //     ->preload()
+                        //     ->getSearchResultsUsing(function (string $search) {
+                        //         return Karyawan::where(function ($query) use ($search) {
+                        //             $query->where('nama', 'like', "%{$search}%");
+                        //         })
+                        //             ->get(['nama', 'id'])
+                        //             ->mapWithKeys(function ($karyawan) {
+                        //                 return [$karyawan->id => $karyawan->nama];
+                        //             })
+                        //             ->toArray();
+                        //     })
+                        //     ->getOptionLabelUsing(function ($value) {
+                        //         $karyawan = Karyawan::find($value);
+                        //         return $karyawan ? $karyawan->nama : null;
+                        //     }),
                         Forms\Components\Select::make('plant_id')
                             // ->relationship('plant', 'nama')
                             ->label('Plant')
@@ -155,7 +169,7 @@ class AssetResource extends Resource implements HasShieldPermissions
                         Forms\Components\Toggle::make('is_aktif')
                             ->required(),
                         Forms\Components\Hidden::make('user_id')
-                            ->default(fn () => Auth::id())
+                            ->default(fn() => Auth::id())
                             ->required(),
                     ])->columns(2),
             ]);
@@ -165,17 +179,24 @@ class AssetResource extends Resource implements HasShieldPermissions
     {
         return $table
             ->columns([
-
+                Tables\Columns\TextColumn::make('company.kode')
+                    ->label('Company')
+                    ->getStateUsing(function ($record) {
+                        $plantId = $record->plant_id;
+                        $companyId = optional(Plant::find($plantId))->company_id;
+                        return optional(Company::find($companyId))->kode;
+                    })
+                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('plant.kode')
                     ->label('Plant')
-                    ->searchable()
                     ->getStateUsing(function ($record) {
                         return $record->plant->kode . ' - ' . $record->plant->nama;
                     }),
                 Tables\Columns\TextColumn::make('nomor')
                     ->label('No. Asset')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->wrap(),
                 Tables\Columns\TextColumn::make('sub')
                     ->label('Sub Asset')
                     ->sortable()
@@ -188,7 +209,8 @@ class AssetResource extends Resource implements HasShieldPermissions
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('nama')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->wrap(),
                 Tables\Columns\TextColumn::make('tgl_perolehan')
                     ->label('Tgl Perolehan')
                     ->sortable()
@@ -198,19 +220,38 @@ class AssetResource extends Resource implements HasShieldPermissions
                     ->label('Harga')
                     ->sortable()
                     ->searchable()
+                    ->formatStateUsing(function ($state) {
+                        return 'Rp. ' . number_format($state, 0, ',', '.'); // Format nilai dengan Rp. dan pemisah ribuan
+                    })
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('serial_number')
                     ->label('Serial Number')
                     ->sortable()
                     ->searchable()
+                    ->wrap()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('karyawan.nama')
                     ->label('Pengguna')
                     ->sortable()
                     ->searchable()
+                    ->wrap()
                     ->toggleable(isToggledHiddenByDefault: false),
-                Tables\Columns\TextColumn::make('status')
-                    ->label('Status')
+                Tables\Columns\TextColumn::make('serviceRequest.status')
+                    ->label('Status Servis')
+                    ->formatStateUsing(function ($state) {
+                        switch ($state) {
+                            case 'Completed':
+                                return 'Selesai Servis';
+                            case 'InProgress':
+                                return 'Dalam Proses Servis'; // Jika status adalah 'in_progress'
+                            case 'Pending':
+                                return 'Menunggu di Servis'; // Jika status adalah 'pending'
+                            case 'Cancel':
+                                return 'Servis dibatalkan'; // Jika status adalah 'cancel'
+                            default:
+                                return ''; // Untuk status lain yang tidak dikenali
+                        }
+                    })
                     ->sortable()
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -223,6 +264,8 @@ class AssetResource extends Resource implements HasShieldPermissions
                     ->label('Keterangan')
                     ->sortable()
                     ->searchable()
+                    ->limit(30)
+                    ->wrap()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('qty_sap')
                     ->label('Qty-SAP')
@@ -253,6 +296,16 @@ class AssetResource extends Resource implements HasShieldPermissions
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                SelectFilter::make('company_id')
+                    ->label('Filter by Company')
+                    ->options(Company::all()->pluck('kode', 'id')->toArray())
+                    ->query(function (Builder $query, $state) {
+                        if ($state['value']) {
+                            return $query->whereHas('plant.company', function ($query) use ($state) {
+                                $query->where('id', $state);
+                            });
+                        }
+                    }),
                 SelectFilter::make('plant_id')
                     ->relationship('plant', 'kode')
                     ->label('Filter by Plant')
@@ -264,9 +317,9 @@ class AssetResource extends Resource implements HasShieldPermissions
                     ->falseLabel('Non Aktif')
                     ->placeholder('Semua')
                     ->queries(
-                        true: fn (Builder $query): Builder => $query->where('is_aktif', true),
-                        false: fn (Builder $query): Builder => $query->where('is_aktif', false),
-                        blank: fn (Builder $query): Builder => $query
+                        true: fn(Builder $query): Builder => $query->where('is_aktif', true),
+                        false: fn(Builder $query): Builder => $query->where('is_aktif', false),
+                        blank: fn(Builder $query): Builder => $query
                     ),
             ])
             ->actions([

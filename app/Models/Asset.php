@@ -43,8 +43,32 @@ class Asset extends Model
         return $this->belongsTo(User::class);
     }
 
+    // Relasi ke Karyawan
     public function karyawan()
     {
         return $this->belongsTo(Karyawan::class);
+    }
+
+    public function serviceRequest()
+    {
+        return $this->hasMany(ServiceRequest::class);
+    }
+
+    // Menambahkan metode untuk mendapatkan status terbaru
+    public function latestServiceRequestStatus()
+    {
+        return $this->hasOne(ServiceRequest::class)->latest();
+    }
+
+    // Relasi ke AssetUsage
+    public function usages()
+    {
+        return $this->hasMany(AssetUsage::class);
+    }
+
+    // Menambahkan metode untuk mendapatkan status terbaru
+    public function latestAssetUsageKaryawan_id()
+    {
+        return $this->hasOne(AssetUsage::class)->latest();
     }
 }

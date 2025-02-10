@@ -68,7 +68,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
 
     public function canAccessPanel(Panel $panel): bool
     {
-        $allowedDomains = ['@club.co.id', '@aibm.co.id', '@gmail.com', '@ketikkan.com'];
+        $allowedDomains = ['@club.co.id', '@aibm.co.id', '@gmail.com', '@indofood.co.id', '@ketikkan.com'];
 
         foreach ($allowedDomains as $domain) {
             if (str_ends_with($this->email, $domain)) {
@@ -85,15 +85,26 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
     }
 
     // Relasi many-to-many dengan Plant
-    public function plants(): BelongsToMany
-    {
-        return $this->belongsToMany(Plant::class);
-    }
+    // public function plants(): BelongsToMany
+    // {
+    //     return $this->belongsToMany(Plant::class);
+    // }
 
     public function isAdmin()
     {
         // Misalnya, Anda memiliki kolom 'role' di tabel 'users'
         // dan nilai 'admin' menandakan pengguna adalah admin
         return $this->role === 'admin';
+    }
+
+    // public function hasRole(string $role): bool
+    // {
+    //     return $this->role === $role;
+    // }
+
+
+    public function plants(): BelongsToMany
+    {
+        return $this->belongsToMany(Plant::class, 'plant_user', 'user_id', 'plant_id');
     }
 }
