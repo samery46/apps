@@ -43,6 +43,9 @@ class CopackExport implements FromCollection, WithMapping, WithHeadings
             $copack->type_id ? $copack->type->nama : '',
             $copack->vendor,
             $copack->keterangan,
+            $copack->reason,
+            $copack->created_at,
+            $copack->updated_at,
             $copack->user_id ? $copack->user->name : '',
         ];
     }
@@ -61,7 +64,10 @@ class CopackExport implements FromCollection, WithMapping, WithHeadings
             'Type Transaksi',
             'Vendor / Supplier',
             'Keterangan',
-            'User Created ',
+            'Alasan dirubah',
+            'Dibuat',
+            'Diedit',
+            'User',
         ];
     }
 }

@@ -38,4 +38,5 @@ class ListCopacks extends ListRecords
 
         return $query;
     }
+
 }

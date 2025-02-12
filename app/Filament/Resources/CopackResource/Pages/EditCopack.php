@@ -19,6 +19,6 @@ class EditCopack extends EditRecord
 
     public static function updated($record)
     {
-        return redirect()->route('filament.admin.resources.copacks.index'); // Redirect to the list page
+        // return redirect()->route('filament.admin.resources.copacks.index'); // Redirect to the list page
     }
 }

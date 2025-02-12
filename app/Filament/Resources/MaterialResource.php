@@ -45,33 +45,40 @@ class MaterialResource extends Resource implements HasShieldPermissions
                         Forms\Components\TextInput::make('kode')
                             ->label('Kode Material')
                             ->required()
+                            ->columnSpan(2)
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('nama')
+                            ->label('Nama Material')
+                            ->columnSpan(4)
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('uom')
+                            ->label('UoM')
+                            ->columnSpan(2)
                             ->maxLength(255),
                         Forms\Components\Select::make('kategori')
                             ->options([
                                 '1' => 'Finish Goods',
                                 '2' => 'Raw Material',
                             ])
-                            ->native(false),
-                        Forms\Components\TextInput::make('nama')
-                            ->label('Nama Material')
-                            ->maxLength(255),
+                            ->native(false)
+                            ->columnSpan(2),
                         Forms\Components\TextInput::make('group')
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('uom')
-                            ->label('UoM')
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->columnSpan(2),
                         Forms\Components\TextInput::make('keterangan')
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->columnSpan(4),
                         Forms\Components\Toggle::make('is_aktif')
                             ->required()
-                            ->hiddenOn('create'),
+                            ->hiddenOn('create')
+                            ->columnSpan(2),
                         Forms\Components\Hidden::make('user_id')
                             ->default(fn() => Auth::id())
                             ->required(),
 
 
                     ])
-                    ->columns(2)
+                    ->columns(8)
                     ->collapsible(),
 
                 Forms\Components\Section::make('Plant')

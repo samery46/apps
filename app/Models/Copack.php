@@ -19,6 +19,7 @@ class Copack extends Model
         'type_id',
         'vendor',
         'keterangan',
+        'reason',
         'user_id'
     ];
 

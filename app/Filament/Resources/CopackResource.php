@@ -25,6 +25,9 @@ use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Filters\SelectFilter;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Redirect;
+use Filament\Tables\Filters\Filter;
+use Filament\Forms\Components\DateRangePicker;
+use Filament\Forms\Components\DatePicker;
 
 
 class CopackResource extends Resource implements HasShieldPermissions
@@ -45,6 +48,7 @@ class CopackResource extends Resource implements HasShieldPermissions
 
     public static function form(Form $form): Form
     {
+
         return $form
             ->schema([
                 Forms\Components\Section::make('Copacker')
@@ -74,12 +78,19 @@ class CopackResource extends Resource implements HasShieldPermissions
                                 return $plant ? $plant->kode . ' - ' . $plant->nama : null;
                             }),
 
-
                         Forms\Components\DatePicker::make('tgl')
                             ->label('Tanggal')
                             ->default(Carbon::today()->format('Y-m-d'))
                             ->columnSpan(2)
-                            ->required(),
+                            ->required()
+                            ->extraAttributes([
+                                'min' => Carbon::today()->subDays(7)->format('Y-m-d'), // Tanggal minimal 7 hari terakhir
+                                'max' => Carbon::today()->format('Y-m-d'), // Tanggal maksimal hari ini
+                            ])
+                            ->rules([
+                                'after_or_equal:' . Carbon::today()->subDays(7)->format('Y-m-d'), // Validasi backend minimal 7 hari terakhir
+                                'before_or_equal:' . Carbon::today()->format('Y-m-d'), // Validasi backend maksimal hari ini
+                            ]),
                     ])
                     ->columns(8)
                     ->collapsible(),
@@ -126,6 +137,7 @@ class CopackResource extends Resource implements HasShieldPermissions
                                     }
                                 }
                             }),
+                            // ->live(), // Menjaga state agar modal tidak tertutup
 
 
                         // ini untuk menambahkan material_id
@@ -251,12 +263,18 @@ class CopackResource extends Resource implements HasShieldPermissions
 
                         Forms\Components\TextInput::make('vendor')
                             ->label('Vendor / Supplier')
-                            ->columnSpan(4)
+                            ->columnSpan(3)
                             ->maxLength(255),
                         Forms\Components\TextInput::make('keterangan')
                             ->label('Keterangan')
-                            ->columnSpan(4)
+                            ->columnSpan(3)
                             ->maxLength(255),
+                        Forms\Components\TextInput::make('reason')
+                            ->label('Alasan diubah')
+                            ->columnSpan(2)
+                            ->maxLength(255)
+                            ->required()
+                            ->hiddenOn('create'),
                     ])
                     ->columns(8)
                     ->collapsible(),
@@ -318,6 +336,10 @@ class CopackResource extends Resource implements HasShieldPermissions
                     ->label('Keterangan')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('reason')
+                    ->label('Alasan dirubah')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Create By')
                     ->numeric()
@@ -339,25 +361,6 @@ class CopackResource extends Resource implements HasShieldPermissions
             ])->defaultSort('tgl', 'desc')
             ->filters([
 
-                // jika menggunakan isAdmin di model User
-
-                // SelectFilter::make('plant_id')
-                //     ->label('Filter by Plant')
-                //     ->options(function () {
-                //         if (auth()->user()->isAdmin()) {
-                //             // Jika user admin, ambil semua plant dari Copack
-                //             return Copack::with('plant')
-                //                 ->get()
-                //                 ->mapWithKeys(function ($item) {
-                //                     return [$item->plant_id => "{$item->plant->kode} - {$item->plant->nama}"];
-                //                 })
-                //                 ->toArray();
-                //         } else {
-                //             // Jika bukan admin, ambil plant yang dimiliki oleh user
-                //             return auth()->user()->plants->pluck('nama', 'id')->toArray();
-                //         }
-                //     }),
-
                 SelectFilter::make('plant_id')
                     ->label('Filter by Plant')
                     ->options(function () {
@@ -375,14 +378,33 @@ class CopackResource extends Resource implements HasShieldPermissions
                         }
                     }),
 
-                SelectFilter::make('tgl')
-                    ->label('Filter by Tgl')
-                    ->options(function () {
-                        return Copack::orderBy('tgl', 'desc')
-                            ->distinct()
-                            ->pluck('tgl', 'tgl')
-                            ->toArray();
-                    }),
+                // SelectFilter::make('tgl')
+                //     ->label('Filter by Tgl')
+                //     ->options(function () {
+                //         return Copack::orderBy('tgl', 'desc')
+                //             ->distinct()
+                //             ->pluck('tgl', 'tgl')
+                //             ->toArray();
+                //     }),
+
+                Filter::make('tgl_range')
+                // ->label('Filter Tanggal')
+                ->form([
+                    DatePicker::make('start_date')
+                        ->label('Dari Tanggal')
+                        ->default(Carbon::today()->toDateString()), // Set default ke hari ini
+                    DatePicker::make('end_date')
+                        ->label('Sampai Tanggal'),
+                ])
+                ->query(function ($query, $data) {
+                    if (!empty($data['start_date']) && !empty($data['end_date'])) {
+                        $query->whereBetween('tgl', [$data['start_date'], $data['end_date']]);
+                    } elseif (!empty($data['start_date'])) {
+                        $query->whereDate('tgl', '>=', $data['start_date']);
+                    } elseif (!empty($data['end_date'])) {
+                        $query->whereDate('tgl', '<=', $data['end_date']);
+                    }
+                }),
                 SelectFilter::make('material_id')
                     ->label('Filter by Material')
                     ->options(function () {
