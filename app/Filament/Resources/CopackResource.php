@@ -218,7 +218,9 @@ class CopackResource extends Resource implements HasShieldPermissions
                         Forms\Components\TextInput::make('qty')
                             ->label('Quantity')
                             ->columnSpan(2)
-                            ->numeric(),
+                            // ->numeric(),
+                            ->type('number')
+                            ->step(0.01),
 
                         // Forms\Components\Select::make('type_id')
                         //     ->label('Type')

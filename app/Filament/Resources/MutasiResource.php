@@ -9,6 +9,7 @@ use App\Models\Mutasi;
 use App\Models\Plant;
 use Carbon\Carbon;
 use Filament\Forms;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -19,6 +20,8 @@ use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Maatwebsite\Excel\Facades\Excel;
 
 class MutasiResource extends Resource
@@ -345,7 +348,66 @@ class MutasiResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('plant_id')
+                    ->label('Filter by Plant')
+                    ->options(function () {
+                        if (auth()->check() && auth()->user()->id === 1) {
+                            // Jika user memiliki ID 1, dianggap sebagai admin
+                            return Mutasi::with('plant')
+                                ->get()
+                                ->mapWithKeys(function ($item) {
+                                    return [$item->plant_id => "{$item->plant->kode} - {$item->plant->nama}"];
+                                })
+                                ->toArray();
+                        } else {
+                            // Jika bukan user dengan ID 1, ambil plant yang dimiliki oleh user
+                            return auth()->user()->plants->pluck('nama', 'id')->toArray();
+                        }
+                    }),
+
+                    SelectFilter::make('periode')
+                        ->label('Periode')
+                        ->options(function () {
+                            $periods = [];
+
+                            for ($i = 11; $i >= 0; $i--) {
+                                $date = now()->subMonths($i);
+                                $periods[$date->format('m-Y')] = $date->format('m-Y');
+                            }
+
+                            return $periods;
+                        })
+                        ->query(function ($query, array $data) {
+                            $value = $data['value'] ?? null;
+
+                            if (!$value) {
+                                return $query;
+                            }
+
+                            [$month, $year] = explode('-', $value);
+                            return $query->whereMonth('tgl', $month)->whereYear('tgl', $year);
+                        })
+                        ->default(now()->format('m-Y'))
+                        ->native(false),
+                    Filter::make('tgl_range')
+                        // ->label('Filter Tanggal')
+                        ->form([
+                            DatePicker::make('start_date')
+                                ->label('Dari Tanggal')
+                                ->default(Carbon::today()->toDateString()), // Set default ke hari ini
+                            DatePicker::make('end_date')
+                                ->label('Sampai Tanggal'),
+                        ])
+                        ->query(function ($query, $data) {
+                            if (!empty($data['start_date']) && !empty($data['end_date'])) {
+                                $query->whereBetween('tgl', [$data['start_date'], $data['end_date']]);
+                            } elseif (!empty($data['start_date'])) {
+                                $query->whereDate('tgl', '>=', $data['start_date']);
+                            } elseif (!empty($data['end_date'])) {
+                                $query->whereDate('tgl', '<=', $data['end_date']);
+                            }
+                        }),
+
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

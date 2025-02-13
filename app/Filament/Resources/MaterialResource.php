@@ -185,6 +185,7 @@ class MaterialResource extends Resource implements HasShieldPermissions
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('plants.kode')
                     ->label('Plant')
+                    ->searchable()
                     ->formatStateUsing(fn($state) => is_array($state) ? implode(', ', $state) : ($state ?? '-')),
                 Tables\Columns\IconColumn::make('is_aktif')
                     ->boolean()
