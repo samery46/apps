@@ -34,7 +34,8 @@ class SoftwareExport implements FromCollection, WithMapping, WithHeadings
         $this->rowNumber++; // Increment nomor urut setiap baris
 
         $companyId = $software->plant_id ? $software->plant->company : null;
-        $deptId = $software->karyawan_id ? $software->karyawan->departemen : null;
+        // $deptId = $software->karyawan_id ? $software->karyawan->departemen : null;
+        $deptId = $software->karyawan?->departemen; // Menggunakan optional chaining
 
         return [
             $this->rowNumber, // Menambahkan nomor urut
@@ -43,11 +44,11 @@ class SoftwareExport implements FromCollection, WithMapping, WithHeadings
             $software->nama,
             $software->tgl,
             $software->srf,
-            $software->karyawan_id ? $software->karyawan->nik : '',
-            $software->karyawan_id ? $software->karyawan->nama : '',
-            $software->karyawan_id ? $software->karyawan->job_title : '',
-            $software->karyawan_id ? $software->karyawan->email : '',
-            $deptId ? $deptId->nama : '',
+            $software->karyawan?->nik ?? '',
+            $software->karyawan?->nama ?? '',
+            $software->karyawan?->job_title ?? '',
+            $software->karyawan?->email ?? '',
+            $deptId?->nama ?? '', // Menghindari error jika departemen null
             $software->keterangan,
             $software->is_aktif ? 'Aktif' : 'Non Aktif',
         ];
