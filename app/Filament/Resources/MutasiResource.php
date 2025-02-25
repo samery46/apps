@@ -107,22 +107,41 @@ class MutasiResource extends Resource
                             ->schema([
                                 Forms\Components\TextInput::make('iap')
                                     ->label('IAP')
-                                    // ->default(0)
-                                    ->numeric(), // Memastikan hanya angka
-                                // ->mask(function (\Filament\Forms\Components\TextInput\Mask $mask) {
-                                //     return $mask->money(prefix: 'Rp ', thousandsSeparator: '.', decimalSeparator: ',', precision: 0);
-                                // }),
-                                // ->reactive(), // Reactive untuk Livewire
+                                    ->prefix('Rp. ')
+                                    ->extraInputAttributes(['style' => 'text-align:right'])
+                                    ->currencyMask(
+                                        thousandSeparator: '.',
+                                        decimalSeparator: ',',
+                                        precision: 2
+                                    ),
                                 Forms\Components\TextInput::make('adm')
                                     ->label('Adm')
-                                    ->numeric(),
+                                    ->prefix('Rp. ')
+                                    ->extraInputAttributes(['style' => 'text-align:right'])
+                                    ->currencyMask(
+                                        thousandSeparator: '.',
+                                        decimalSeparator: ',',
+                                        precision: 2
+                                    ),
                                 Forms\Components\TextInput::make('potongan')
                                     ->label('Potongan IAP')
-                                    ->numeric(),
+                                    ->prefix('Rp. ')
+                                    ->extraInputAttributes(['style' => 'text-align:right'])
+                                    ->currencyMask(
+                                        thousandSeparator: '.',
+                                        decimalSeparator: ',',
+                                        precision: 2
+                                    ),
                                 Forms\Components\TextInput::make('subtotal1')
                                     ->label('Subtotal IAP')
                                     ->disabled()
-                                    ->numeric(),
+                                    ->prefix('Rp. ')
+                                    ->extraInputAttributes(['style' => 'text-align:right'])
+                                    ->currencyMask(
+                                        thousandSeparator: '.',
+                                        decimalSeparator: ',',
+                                        precision: 2
+                                    ),
                             ])
                             ->columns(4),
                         Forms\Components\Section::make('Non IAP')
@@ -130,61 +149,164 @@ class MutasiResource extends Resource
                             ->schema([
                                 Forms\Components\TextInput::make('ar_mars')
                                     ->label('AR Mars')
-                                    ->numeric(),
+                                    ->prefix('Rp. ')
+                                    ->extraInputAttributes(['style' => 'text-align:right'])
+                                    ->currencyMask(
+                                        thousandSeparator: '.',
+                                        decimalSeparator: ',',
+                                        precision: 2
+                                    ),
                                 Forms\Components\TextInput::make('direct_selling')
                                     ->label('Direct Selling')
-                                    ->numeric(),
+                                    ->prefix('Rp. ')
+                                    ->extraInputAttributes(['style' => 'text-align:right'])
+                                    ->currencyMask(
+                                        thousandSeparator: '.',
+                                        decimalSeparator: ',',
+                                        precision: 2
+                                    ),
                                 Forms\Components\TextInput::make('rumah_club')
                                     ->label('Rumah Club')
-                                    ->numeric(),
+                                    ->prefix('Rp. ')
+                                    ->extraInputAttributes(['style' => 'text-align:right'])
+                                    ->currencyMask(
+                                        thousandSeparator: '.',
+                                        decimalSeparator: ',',
+                                        precision: 2
+                                    ),
                                 Forms\Components\TextInput::make('subtotal2')
                                     ->label('Subtotal Non IAP')
-                                    ->numeric()
                                     ->disabled()
-                            ])->columns(4), // Atur kolom dalam section IAP
+                                    ->prefix('Rp. ')
+                                    ->extraInputAttributes(['style' => 'text-align:right'])
+                                    ->currencyMask(
+                                        thousandSeparator: '.',
+                                        decimalSeparator: ',',
+                                        precision: 2
+                                    )
+                            ])
+                            ->columns(4), // Atur kolom dalam section IAP
                         Forms\Components\Section::make('Non IAP Others')
                             ->description('Transaksi Non IAP Others')
                             ->schema([
                                 Forms\Components\TextInput::make('sewa_dispenser')
                                     ->label('Sewa Dispenser')
-                                    ->numeric(),
+                                    ->prefix('Rp. ')
+                                    ->extraInputAttributes(['style' => 'text-align:right'])
+                                    ->currencyMask(
+                                        thousandSeparator: '.',
+                                        decimalSeparator: ',',
+                                        precision: 2
+                                    ),
                                 Forms\Components\TextInput::make('avalan')
                                     ->label('Avalan')
-                                    ->numeric(),
+                                    ->prefix('Rp. ')
+                                    ->extraInputAttributes(['style' => 'text-align:right'])
+                                    ->currencyMask(
+                                        thousandSeparator: '.',
+                                        decimalSeparator: ',',
+                                        precision: 2
+                                    ),
                                 Forms\Components\TextInput::make('fada')
                                     ->label('FADA')
-                                    ->numeric(),
+                                    ->prefix('Rp. ')
+                                    ->extraInputAttributes(['style' => 'text-align:right'])
+                                    ->currencyMask(
+                                        thousandSeparator: '.',
+                                        decimalSeparator: ',',
+                                        precision: 2
+                                    ),
                                 Forms\Components\TextInput::make('jaminan')
                                     ->label('Jaminan')
-                                    ->numeric(),
+                                    ->prefix('Rp. ')
+                                    ->extraInputAttributes(['style' => 'text-align:right'])
+                                    ->currencyMask(
+                                        thousandSeparator: '.',
+                                        decimalSeparator: ',',
+                                        precision: 2
+                                    ),
                                 Forms\Components\TextInput::make('packaging')
                                     ->label('Packaging')
-                                    ->numeric(),
+                                    ->prefix('Rp. ')
+                                    ->extraInputAttributes(['style' => 'text-align:right'])
+                                    ->currencyMask(
+                                        thousandSeparator: '.',
+                                        decimalSeparator: ',',
+                                        precision: 2
+                                    ),
                                 Forms\Components\TextInput::make('galon_afkir')
                                     ->label('Galon Afkir')
-                                    ->numeric(),
+                                    ->prefix('Rp. ')
+                                    ->extraInputAttributes(['style' => 'text-align:right'])
+                                    ->currencyMask(
+                                        thousandSeparator: '.',
+                                        decimalSeparator: ',',
+                                        precision: 2
+                                    ),
                                 Forms\Components\TextInput::make('sewa_depo')
                                     ->label('Sewa Depo')
-                                    ->numeric(),
+                                    ->prefix('Rp. ')
+                                    ->extraInputAttributes(['style' => 'text-align:right'])
+                                    ->currencyMask(
+                                        thousandSeparator: '.',
+                                        decimalSeparator: ',',
+                                        precision: 2
+                                    ),
                                 Forms\Components\TextInput::make('raw_material')
                                     ->label('Raw Material')
-                                    ->numeric(),
+                                    ->prefix('Rp. ')
+                                    ->extraInputAttributes(['style' => 'text-align:right'])
+                                    ->currencyMask(
+                                        thousandSeparator: '.',
+                                        decimalSeparator: ',',
+                                        precision: 2
+                                    ),
                                 Forms\Components\TextInput::make('pem_listrik')
                                     ->label('Pem Listrik')
-                                    ->numeric(),
+                                    ->prefix('Rp. ')
+                                    ->extraInputAttributes(['style' => 'text-align:right'])
+                                    ->currencyMask(
+                                        thousandSeparator: '.',
+                                        decimalSeparator: ',',
+                                        precision: 2
+                                    ),
                                 Forms\Components\TextInput::make('klaim_sopir')
                                     ->label('Klaim Sopir')
-                                    ->numeric(),
+                                    ->prefix('Rp. ')
+                                    ->extraInputAttributes(['style' => 'text-align:right'])
+                                    ->currencyMask(
+                                        thousandSeparator: '.',
+                                        decimalSeparator: ',',
+                                        precision: 2
+                                    ),
                                 Forms\Components\TextInput::make('admin_bank')
                                     ->label('Admin Bank')
-                                    ->numeric(),
+                                    ->prefix('Rp. ')
+                                    ->extraInputAttributes(['style' => 'text-align:right'])
+                                    ->currencyMask(
+                                        thousandSeparator: '.',
+                                        decimalSeparator: ',',
+                                        precision: 2
+                                    ),
                                 Forms\Components\TextInput::make('others')
                                     ->label('Others')
-                                    ->numeric(),
+                                    ->prefix('Rp. ')
+                                    ->extraInputAttributes(['style' => 'text-align:right'])
+                                    ->currencyMask(
+                                        thousandSeparator: '.',
+                                        decimalSeparator: ',',
+                                        precision: 2
+                                    ),
                                 Forms\Components\TextInput::make('subtotal3')
                                     ->label('Subtotal Non IAP Others')
-                                    ->numeric()
+                                    ->prefix('Rp. ')
                                     ->disabled()
+                                    ->extraInputAttributes(['style' => 'text-align:right'])
+                                    ->currencyMask(
+                                        thousandSeparator: '.',
+                                        decimalSeparator: ',',
+                                        precision: 2
+                                    )
                             ])->columns(4), // Atur kolom dalam section IAP
                     ])
                     ->columns(2),
@@ -193,20 +315,44 @@ class MutasiResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('subtotal1')
                             ->label('Subtotal IAP')
-                            ->numeric()
-                            ->disabled(),
+                            ->prefix('Rp. ')
+                            ->disabled()
+                            ->extraInputAttributes(['style' => 'text-align:right'])
+                            ->currencyMask(
+                                thousandSeparator: '.',
+                                decimalSeparator: ',',
+                                precision: 2
+                            ),
                         Forms\Components\TextInput::make('subtotal2')
                             ->label('Subtotal Non IAP')
-                            ->numeric()
-                            ->disabled(),
+                            ->prefix('Rp. ')
+                            ->disabled()
+                            ->extraInputAttributes(['style' => 'text-align:right'])
+                            ->currencyMask(
+                                thousandSeparator: '.',
+                                decimalSeparator: ',',
+                                precision: 2
+                            ),
                         Forms\Components\TextInput::make('subtotal3')
                             ->label('Subtotal Non IAP Others')
-                            ->numeric()
-                            ->disabled(),
+                            ->prefix('Rp. ')
+                            ->disabled()
+                            ->extraInputAttributes(['style' => 'text-align:right'])
+                            ->currencyMask(
+                                thousandSeparator: '.',
+                                decimalSeparator: ',',
+                                precision: 2
+                            ),
                         Forms\Components\TextInput::make('grandtotal')
                             ->label('Grand Total')
-                            ->numeric()
+                            ->prefix('Rp. ')
                             ->disabled()
+                            ->extraInputAttributes(['style' => 'text-align:right'])
+                            ->currencyMask(
+                                thousandSeparator: '.',
+                                decimalSeparator: ',',
+                                precision: 2
+                            )
                     ])
                     ->columns(4),
 
@@ -216,16 +362,31 @@ class MutasiResource extends Resource
                         Forms\Components\TextInput::make('keterangan')
                             ->maxLength(255)
                             ->columnSpan(2),
+                        // Forms\Components\FileUpload::make('foto')
+                        //     ->label('Foto')
+                        //     ->image() // Membatasi hanya file gambar
+                        //     ->maxSize(1024) // Maksimal ukuran file dalam kilobyte (1 MB)
+                        //     ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/jpg']) // Format file yang diterima
+                        //     ->directory('uploads/lampiran') // Lokasi penyimpanan
+                        //     ->preserveFilenames() // Memastikan nama file asli digunakan
+                        //     ->enableDownload() // Tambahkan opsi unduh untuk debugging
+                        //     ->enableOpen()
+                        //     ->columnSpan(1),
                         Forms\Components\FileUpload::make('foto')
-                            ->label('Foto')
-                            ->image() // Membatasi hanya file gambar
+                            ->label('Lampiran')
                             ->maxSize(1024) // Maksimal ukuran file dalam kilobyte (1 MB)
-                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/jpg']) // Format file yang diterima
+                            ->acceptedFileTypes([
+                                'image/jpeg',
+                                'image/png',
+                                'image/jpg',
+                                'application/pdf' // MIME type untuk file PDF
+                            ])
                             ->directory('uploads/lampiran') // Lokasi penyimpanan
                             ->preserveFilenames() // Memastikan nama file asli digunakan
-                            ->enableDownload() // Tambahkan opsi unduh untuk debugging
+                            ->enableDownload() // Opsi untuk mengunduh file
                             ->enableOpen()
                             ->columnSpan(1),
+
                     ])
                     ->columns(4),
                 Forms\Components\Hidden::make('user_id')
@@ -237,6 +398,7 @@ class MutasiResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultSort('tgl', 'asc')
             ->columns([
                 Tables\Columns\TextColumn::make('periode')
                     ->searchable(),
@@ -246,86 +408,107 @@ class MutasiResource extends Resource
                 Tables\Columns\TextColumn::make('plant.kode')
                     ->label('Plant')
                     ->searchable()
+                    ->sortable()
                     ->getStateUsing(function ($record) {
                         return $record->plant->kode . ' - ' . $record->plant->nama;
                     }),
                 Tables\Columns\ImageColumn::make('foto')
-                    ->label('Foto')
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->label('Lampiran')
+                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('iap')
                     ->label('IAP')
                     ->numeric()
+                    ->alignRight()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('adm')
                     ->label('Adm')
                     ->numeric()
+                    ->alignRight()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('potongan')
+                    ->label('Potongan')
                     ->numeric()
+                    ->alignRight()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('ar_mars')
                     ->label('AR Mars')
                     ->numeric()
+                    ->alignRight()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('direct_selling')
                     ->label('Direct Selling')
                     ->numeric()
+                    ->alignRight()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('rumah_club')
                     ->label('Rumah Club')
                     ->numeric()
+                    ->alignRight()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('sewa_dispenser')
                     ->label('Sewa Dispenser')
                     ->numeric()
+                    ->alignRight()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('avalan')
                     ->label('Avalan')
                     ->numeric()
+                    ->alignRight()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('fada')
                     ->label('FADA')
                     ->numeric()
+                    ->alignRight()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('jaminan')
                     ->label('Jaminan')
                     ->numeric()
+                    ->alignRight()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('packaging')
                     ->label('Packaging')
                     ->numeric()
+                    ->alignRight()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('galon_afkir')
                     ->label('Galon Afkir')
                     ->numeric()
+                    ->alignRight()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('sewa_depo')
                     ->label('Sewa Depo')
                     ->numeric()
+                    ->alignRight()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('raw_material')
                     ->label('RM')
                     ->numeric()
+                    ->alignRight()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('pem_listrik')
                     ->label('Listrik')
                     ->numeric()
+                    ->alignRight()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('klaim_sopir')
                     ->label('Klaim Sopir')
                     ->numeric()
+                    ->alignRight()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('admin_bank')
                     ->label('Admin Bank')
                     ->numeric()
+                    ->alignRight()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('others')
                     ->label('Others')
                     ->numeric()
+                    ->alignRight()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('grandtotal')
                     ->label('Total')
                     ->numeric()
+                    ->alignRight()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('keterangan')
                     ->searchable()
@@ -333,7 +516,7 @@ class MutasiResource extends Resource
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Created By')
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->dateTime()
                     ->sortable()
@@ -355,6 +538,9 @@ class MutasiResource extends Resource
                             // Jika user memiliki ID 1, dianggap sebagai admin
                             return Mutasi::with('plant')
                                 ->get()
+                                ->sortBy(function ($item) {
+                                    return $item->plant->kode;
+                                })
                                 ->mapWithKeys(function ($item) {
                                     return [$item->plant_id => "{$item->plant->kode} - {$item->plant->nama}"];
                                 })
@@ -364,39 +550,15 @@ class MutasiResource extends Resource
                             return auth()->user()->plants->pluck('nama', 'id')->toArray();
                         }
                     }),
-
-                    SelectFilter::make('periode')
-                        ->label('Periode')
-                        ->options(function () {
-                            $periods = [];
-
-                            for ($i = 11; $i >= 0; $i--) {
-                                $date = now()->subMonths($i);
-                                $periods[$date->format('m-Y')] = $date->format('m-Y');
-                            }
-
-                            return $periods;
-                        })
-                        ->query(function ($query, array $data) {
-                            $value = $data['value'] ?? null;
-
-                            if (!$value) {
-                                return $query;
-                            }
-
-                            [$month, $year] = explode('-', $value);
-                            return $query->whereMonth('tgl', $month)->whereYear('tgl', $year);
-                        })
-                        ->default(now()->format('m-Y'))
-                        ->native(false),
                     Filter::make('tgl_range')
                         // ->label('Filter Tanggal')
                         ->form([
                             DatePicker::make('start_date')
                                 ->label('Dari Tanggal')
-                                ->default(Carbon::today()->toDateString()), // Set default ke hari ini
+                                ->default(Carbon::today()->subDays(6)->toDateString()), // 7 hari terakhir (termasuk hari ini)
                             DatePicker::make('end_date')
-                                ->label('Sampai Tanggal'),
+                                ->label('Sampai Tanggal')
+                                ->default(Carbon::today()->toDateString()), // Set default ke hari ini
                         ])
                         ->query(function ($query, $data) {
                             if (!empty($data['start_date']) && !empty($data['end_date'])) {
