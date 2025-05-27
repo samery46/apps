@@ -23,6 +23,7 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Maatwebsite\Excel\Facades\Excel;
+use Filament\Tables\Columns\Summarizers\Sum;
 
 class MutasiResource extends Resource
 {
@@ -419,97 +420,116 @@ class MutasiResource extends Resource
                     ->label('IAP')
                     ->numeric()
                     ->alignRight()
-                    ->sortable(),
+                    ->sortable()
+                    ->summarize(Sum::make()->label('Sub Total')),
                 Tables\Columns\TextColumn::make('adm')
                     ->label('Adm')
                     ->numeric()
                     ->alignRight()
-                    ->sortable(),
+                    ->sortable()
+                    ->summarize(Sum::make()->label('Sub Total')),
                 Tables\Columns\TextColumn::make('potongan')
                     ->label('Potongan')
                     ->numeric()
                     ->alignRight()
-                    ->sortable(),
+                    ->sortable()
+                    ->summarize(Sum::make()->label('Sub Total')),
                 Tables\Columns\TextColumn::make('ar_mars')
                     ->label('AR Mars')
                     ->numeric()
                     ->alignRight()
-                    ->sortable(),
+                    ->sortable()
+                    ->summarize(Sum::make()->label('Sub Total')),
                 Tables\Columns\TextColumn::make('direct_selling')
                     ->label('Direct Selling')
                     ->numeric()
                     ->alignRight()
-                    ->sortable(),
+                    ->sortable()
+                    ->summarize(Sum::make()->label('Sub Total')),
                 Tables\Columns\TextColumn::make('rumah_club')
                     ->label('Rumah Club')
                     ->numeric()
                     ->alignRight()
-                    ->sortable(),
+                    ->sortable()
+                    ->summarize(Sum::make()->label('Sub Total')),
                 Tables\Columns\TextColumn::make('sewa_dispenser')
                     ->label('Sewa Dispenser')
                     ->numeric()
                     ->alignRight()
-                    ->sortable(),
+                    ->sortable()
+                    ->summarize(Sum::make()->label('Sub Total')),
                 Tables\Columns\TextColumn::make('avalan')
                     ->label('Avalan')
                     ->numeric()
                     ->alignRight()
-                    ->sortable(),
+                    ->sortable()
+                    ->summarize(Sum::make()->label('Sub Total')),
                 Tables\Columns\TextColumn::make('fada')
                     ->label('FADA')
                     ->numeric()
                     ->alignRight()
-                    ->sortable(),
+                    ->sortable()
+                    ->summarize(Sum::make()->label('Sub Total')),
                 Tables\Columns\TextColumn::make('jaminan')
                     ->label('Jaminan')
                     ->numeric()
                     ->alignRight()
-                    ->sortable(),
+                    ->sortable()
+                    ->summarize(Sum::make()->label('Sub Total')),
                 Tables\Columns\TextColumn::make('packaging')
                     ->label('Packaging')
                     ->numeric()
                     ->alignRight()
-                    ->sortable(),
+                    ->sortable()
+                    ->summarize(Sum::make()->label('Sub Total')),
                 Tables\Columns\TextColumn::make('galon_afkir')
                     ->label('Galon Afkir')
                     ->numeric()
                     ->alignRight()
-                    ->sortable(),
+                    ->sortable()
+                    ->summarize(Sum::make()->label('Sub Total')),
                 Tables\Columns\TextColumn::make('sewa_depo')
                     ->label('Sewa Depo')
                     ->numeric()
                     ->alignRight()
-                    ->sortable(),
+                    ->sortable()
+                    ->summarize(Sum::make()->label('Sub Total')),
                 Tables\Columns\TextColumn::make('raw_material')
                     ->label('RM')
                     ->numeric()
                     ->alignRight()
-                    ->sortable(),
+                    ->sortable()
+                    ->summarize(Sum::make()->label('Sub Total')),
                 Tables\Columns\TextColumn::make('pem_listrik')
                     ->label('Listrik')
                     ->numeric()
                     ->alignRight()
-                    ->sortable(),
+                    ->sortable()
+                    ->summarize(Sum::make()->label('Sub Total')),
                 Tables\Columns\TextColumn::make('klaim_sopir')
                     ->label('Klaim Sopir')
                     ->numeric()
                     ->alignRight()
-                    ->sortable(),
+                    ->sortable()
+                    ->summarize(Sum::make()->label('Sub Total')),
                 Tables\Columns\TextColumn::make('admin_bank')
                     ->label('Admin Bank')
                     ->numeric()
                     ->alignRight()
-                    ->sortable(),
+                    ->sortable()
+                    ->summarize(Sum::make()->label('Sub Total')),
                 Tables\Columns\TextColumn::make('others')
                     ->label('Others')
                     ->numeric()
                     ->alignRight()
-                    ->sortable(),
+                    ->sortable()
+                    ->summarize(Sum::make()->label('Sub Total')),
                 Tables\Columns\TextColumn::make('grandtotal')
                     ->label('Total')
                     ->numeric()
                     ->alignRight()
-                    ->sortable(),
+                    ->sortable()
+                    ->summarize(Sum::make()->label('Grand Total')),
                 Tables\Columns\TextColumn::make('keterangan')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),

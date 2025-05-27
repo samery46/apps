@@ -110,36 +110,36 @@ class AssetResource extends Resource implements HasShieldPermissions
 
                         Forms\Components\Hidden::make('karyawan_id')
                             ->default(fn($record) => $record?->karyawan_id),
-                        Forms\Components\TextInput::make('name')
-                            ->label('Pengguna')
-                            ->disabled()
-                            ->afterStateHydrated(function ($state, callable $set, $record) {
-                                // Jika ada record dan memiliki relasi karyawan, tampilkan nama karyawan
-                                if ($record && $record->karyawan) {
-                                    $set('name', $record->karyawan->nama);
-                                }
-                            }),
-
-                        // Forms\Components\Select::make('karyawan_id')
+                        // Forms\Components\TextInput::make('name')
                         //     ->label('Pengguna')
-                        //     ->placeholder('Cari nama karyawan')
-                        //     ->required()
-                        //     ->searchable()
-                        //     ->preload()
-                        //     ->getSearchResultsUsing(function (string $search) {
-                        //         return Karyawan::where(function ($query) use ($search) {
-                        //             $query->where('nama', 'like', "%{$search}%");
-                        //         })
-                        //             ->get(['nama', 'id'])
-                        //             ->mapWithKeys(function ($karyawan) {
-                        //                 return [$karyawan->id => $karyawan->nama];
-                        //             })
-                        //             ->toArray();
-                        //     })
-                        //     ->getOptionLabelUsing(function ($value) {
-                        //         $karyawan = Karyawan::find($value);
-                        //         return $karyawan ? $karyawan->nama : null;
+                        //     ->disabled()
+                        //     ->afterStateHydrated(function ($state, callable $set, $record) {
+                        //         // Jika ada record dan memiliki relasi karyawan, tampilkan nama karyawan
+                        //         if ($record && $record->karyawan) {
+                        //             $set('name', $record->karyawan->nama);
+                        //         }
                         //     }),
+
+                        Forms\Components\Select::make('karyawan_id')
+                            ->label('Pengguna')
+                            ->placeholder('Cari nama karyawan')
+                            ->required()
+                            ->searchable()
+                            ->preload()
+                            ->getSearchResultsUsing(function (string $search) {
+                                return Karyawan::where(function ($query) use ($search) {
+                                    $query->where('nama', 'like', "%{$search}%");
+                                })
+                                    ->get(['nama', 'id'])
+                                    ->mapWithKeys(function ($karyawan) {
+                                        return [$karyawan->id => $karyawan->nama];
+                                    })
+                                    ->toArray();
+                            })
+                            ->getOptionLabelUsing(function ($value) {
+                                $karyawan = Karyawan::find($value);
+                                return $karyawan ? $karyawan->nama : null;
+                            }),
                         Forms\Components\Select::make('plant_id')
                             // ->relationship('plant', 'nama')
                             ->label('Plant')
