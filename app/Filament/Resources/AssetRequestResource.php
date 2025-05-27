@@ -30,12 +30,20 @@ use App\Models\AssetGroup;
 use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Resources\Pages\ViewRecord;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 
 class AssetRequestResource extends Resource
 {
     protected static ?string $model = AssetRequest::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $pluralModelLabel = 'Asset Number Request';
+
+    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
+
+    protected static ?string $navigationGroup = 'Asset Management';
+
+    protected static ?int $navigationSort = 313;
 
     public static function form(Form $form): Form
     {
@@ -52,7 +60,7 @@ class AssetRequestResource extends Resource
                         ->default(fn () => 'Diisi otomatis saat disimpan'),
                     Forms\Components\Select::make('plant_id')
                         ->label('Plant')
-                        ->placeholder('Cari kode atau nama plant')
+                        ->placeholder('Cari kode atau nama Plant')
                         ->required()
                         ->columnSpan(3)
                         ->searchable()
@@ -119,24 +127,30 @@ class AssetRequestResource extends Resource
                         ->label('Nomor Aktiva Tetap')
                         ->columnSpan(2)
                         ->maxLength(255)
+                        ->placeholder('Isikan Nomor Aktiva Tetap')
+                        ->hiddenOn(('create'))
                         ->disabled(fn ($record) => $record && $record->status === 'approved'),
                     Forms\Components\TextInput::make('sub_asset_number')
                         ->label('Nomor Sub Asset')
                         ->columnSpan(2)
                         ->maxLength(255)
+                        ->hiddenOn(('create'))
                         ->disabled(fn ($record) => $record && $record->status === 'approved'),
                     Forms\Components\TextInput::make('cea_number')
                         ->label('Nomor CEA')
                         ->maxLength(255)
+                        ->placeholder('Isikan Nomor CEA')
                         ->columnSpan(3)
                         ->disabled(fn ($record) => $record && $record->status === 'approved'),
                     Forms\Components\TextInput::make('usage_period')
                         ->label('Penggunaan')
                         ->columnSpan(1)
+                        ->placeholder('( Tahun )')
                         ->maxLength(255)
                         ->disabled(fn ($record) => $record && $record->status === 'approved'),
                     Forms\Components\TextInput::make('quantity')
                         ->label('Qty')
+                        ->placeholder('Qty')
                         ->columnSpan(1)
                         ->maxLength(255)
                         ->disabled(fn ($record) => $record && $record->status === 'approved'),
@@ -179,23 +193,26 @@ class AssetRequestResource extends Resource
                         ->disabled(fn ($record) => $record && $record->status === 'approved'),
                     Forms\Components\TextInput::make('item_name')
                         ->label('Nama Barang')
+                        ->placeholder('Isikan Nama Barang sesuai CEA')
                         ->maxLength(255)
                         ->columnSpan(4)
                         ->disabled(fn ($record) => $record && $record->status === 'approved'),
                     Forms\Components\TextInput::make('country_of_origin')
                         ->label('Asal Negara')
+                        ->placeholder('Isikan Asal Negara')
                         ->maxLength(255)
                         ->columnSpan(2)
                         ->disabled(fn ($record) => $record && $record->status === 'approved'),
                     Forms\Components\TextInput::make('supplier')
                         ->label('Supplier')
+                        ->placeholder('Isikan Nama Supplier')
                         ->maxLength(255)
                         ->columnSpan(3)
                         ->disabled(fn ($record) => $record && $record->status === 'approved'),
                     Forms\Components\TextInput::make('year_of_manufacture')
                         ->label('Pembuatan')
                         ->columnSpan(1)
-                        ->placeholder('Isi tahun')
+                        ->placeholder('( Tahun )')
                         ->disabled(fn ($record) => $record && $record->status === 'approved'),
                     Forms\Components\DatePicker::make('expected_arrival')
                         ->label('Estimasi Kedatangan')
@@ -211,9 +228,11 @@ class AssetRequestResource extends Resource
                 ->schema([
                     Forms\Components\Textarea::make('location')
                         ->columnSpan(4)
+                        ->placeholder('Isikan lokasi detail barang akan ditempatkan')
                         ->disabled(fn ($record) => $record && $record->status === 'approved'),
                     Forms\Components\Textarea::make('description')
                         ->label('Catatan')
+                        ->placeholder('Silahkan isikan catatan tambahan')
                         ->columnSpan(4),
                     Forms\Components\Select::make('status')
                         ->options([
@@ -514,4 +533,17 @@ class AssetRequestResource extends Resource
             ->disabled()
             ->hiddenLabel();
     }
+
+public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any'
+        ];
+    }
+
 }

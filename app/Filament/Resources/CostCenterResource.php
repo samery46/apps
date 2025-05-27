@@ -14,13 +14,18 @@ use App\Models\Plant;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 
 class CostCenterResource extends Resource
 {
     protected static ?string $model = CostCenter::class;
+    protected static ?string $pluralModelLabel = 'Cost Center';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-currency-dollar';
 
+    protected static ?string $navigationGroup = 'Asset Management';
+
+    protected static ?int $navigationSort = 311;
     public static function form(Form $form): Form
     {
         return $form
@@ -56,14 +61,19 @@ class CostCenterResource extends Resource
                     }),
                 Forms\Components\TextInput::make('cost_center')
                     ->required()
+                    ->label('Cost Center')
+                    ->placeholder('Isikan kode Cost Center')
                     ->columnSpan(3)
                     ->maxLength(255),
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->columnSpan(3)
+                    ->placeholder('Isikan nama Cost Center')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('short_text')
                     ->maxLength(255)
+                    ->label('Short Text')
+                    ->placeholder('Isikan Short Text')
                     ->columnSpan(3),
                 Forms\Components\Toggle::make('is_aktif')
                     ->required()
@@ -135,4 +145,17 @@ class CostCenterResource extends Resource
             'edit' => Pages\EditCostCenter::route('/{record}/edit'),
         ];
     }
+
+public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any'
+        ];
+    }
+
 }

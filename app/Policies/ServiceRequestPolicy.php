@@ -2,18 +2,20 @@
 
 namespace App\Policies;
 
-use App\Models\ServiceRequest;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
+use App\Models\ServiceRequest;
+use Illuminate\Auth\Access\HandlesAuthorization;
 
 class ServiceRequestPolicy
 {
+    use HandlesAuthorization;
+
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_servicerequest');
+        return $user->can('view_any_service::request');
     }
 
     /**
@@ -21,7 +23,7 @@ class ServiceRequestPolicy
      */
     public function view(User $user, ServiceRequest $serviceRequest): bool
     {
-        return $user->can('view_servicerequest');
+        return $user->can('view_service::request');
     }
 
     /**
@@ -29,7 +31,7 @@ class ServiceRequestPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_servicerequest');
+        return $user->can('create_service::request');
     }
 
     /**
@@ -37,7 +39,7 @@ class ServiceRequestPolicy
      */
     public function update(User $user, ServiceRequest $serviceRequest): bool
     {
-        return $user->can('update_servicerequest');
+        return $user->can('update_service::request');
     }
 
     /**
@@ -45,22 +47,62 @@ class ServiceRequestPolicy
      */
     public function delete(User $user, ServiceRequest $serviceRequest): bool
     {
-        return $user->can('delete_servicerequest');
+        return $user->can('delete_service::request');
     }
 
     /**
-     * Determine whether the user can restore the model.
+     * Determine whether the user can bulk delete.
      */
-    public function restore(User $user, ServiceRequest $serviceRequest): bool
+    public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_servicerequest');
+        return $user->can('delete_any_service::request');
     }
 
     /**
-     * Determine whether the user can permanently delete the model.
+     * Determine whether the user can permanently delete.
      */
     public function forceDelete(User $user, ServiceRequest $serviceRequest): bool
     {
-        return $user->can('force_delete_servicerequest');
+        return $user->can('force_delete_service::request');
+    }
+
+    /**
+     * Determine whether the user can permanently bulk delete.
+     */
+    public function forceDeleteAny(User $user): bool
+    {
+        return $user->can('force_delete_any_service::request');
+    }
+
+    /**
+     * Determine whether the user can restore.
+     */
+    public function restore(User $user, ServiceRequest $serviceRequest): bool
+    {
+        return $user->can('restore_service::request');
+    }
+
+    /**
+     * Determine whether the user can bulk restore.
+     */
+    public function restoreAny(User $user): bool
+    {
+        return $user->can('restore_any_service::request');
+    }
+
+    /**
+     * Determine whether the user can replicate.
+     */
+    public function replicate(User $user, ServiceRequest $serviceRequest): bool
+    {
+        return $user->can('replicate_service::request');
+    }
+
+    /**
+     * Determine whether the user can reorder.
+     */
+    public function reorder(User $user): bool
+    {
+        return $user->can('reorder_service::request');
     }
 }

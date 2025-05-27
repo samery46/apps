@@ -63,7 +63,7 @@ class DepartemenPolicy
      */
     public function forceDelete(User $user, Departemen $departemen): bool
     {
-        return $user->can('force_delete_departemen');
+        return $user->can('{{ ForceDelete }}');
     }
 
     /**
@@ -71,7 +71,7 @@ class DepartemenPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_departemen');
+        return $user->can('{{ ForceDeleteAny }}');
     }
 
     /**
@@ -79,7 +79,7 @@ class DepartemenPolicy
      */
     public function restore(User $user, Departemen $departemen): bool
     {
-        return $user->can('restore_departemen');
+        return $user->can('{{ Restore }}');
     }
 
     /**
@@ -87,7 +87,7 @@ class DepartemenPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_departemen');
+        return $user->can('{{ RestoreAny }}');
     }
 
     /**
@@ -95,7 +95,7 @@ class DepartemenPolicy
      */
     public function replicate(User $user, Departemen $departemen): bool
     {
-        return $user->can('replicate_departemen');
+        return $user->can('{{ Replicate }}');
     }
 
     /**
@@ -103,6 +103,6 @@ class DepartemenPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_departemen');
+        return $user->can('{{ Reorder }}');
     }
 }

@@ -63,7 +63,7 @@ class UidsapPolicy
      */
     public function forceDelete(User $user, Uidsap $uidsap): bool
     {
-        return $user->can('force_delete_uidsap');
+        return $user->can('{{ ForceDelete }}');
     }
 
     /**
@@ -71,7 +71,7 @@ class UidsapPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_uidsap');
+        return $user->can('{{ ForceDeleteAny }}');
     }
 
     /**
@@ -79,7 +79,7 @@ class UidsapPolicy
      */
     public function restore(User $user, Uidsap $uidsap): bool
     {
-        return $user->can('restore_uidsap');
+        return $user->can('{{ Restore }}');
     }
 
     /**
@@ -87,7 +87,7 @@ class UidsapPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_uidsap');
+        return $user->can('{{ RestoreAny }}');
     }
 
     /**
@@ -95,7 +95,7 @@ class UidsapPolicy
      */
     public function replicate(User $user, Uidsap $uidsap): bool
     {
-        return $user->can('replicate_uidsap');
+        return $user->can('{{ Replicate }}');
     }
 
     /**
@@ -103,6 +103,6 @@ class UidsapPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_uidsap');
+        return $user->can('{{ Reorder }}');
     }
 }

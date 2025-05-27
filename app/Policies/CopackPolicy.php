@@ -63,7 +63,7 @@ class CopackPolicy
      */
     public function forceDelete(User $user, Copack $copack): bool
     {
-        return $user->can('force_delete_copack');
+        return $user->can('{{ ForceDelete }}');
     }
 
     /**
@@ -71,7 +71,7 @@ class CopackPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_copack');
+        return $user->can('{{ ForceDeleteAny }}');
     }
 
     /**
@@ -79,7 +79,7 @@ class CopackPolicy
      */
     public function restore(User $user, Copack $copack): bool
     {
-        return $user->can('restore_copack');
+        return $user->can('{{ Restore }}');
     }
 
     /**
@@ -87,7 +87,7 @@ class CopackPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_copack');
+        return $user->can('{{ RestoreAny }}');
     }
 
     /**
@@ -95,7 +95,7 @@ class CopackPolicy
      */
     public function replicate(User $user, Copack $copack): bool
     {
-        return $user->can('replicate_copack');
+        return $user->can('{{ Replicate }}');
     }
 
     /**
@@ -103,6 +103,6 @@ class CopackPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_copack');
+        return $user->can('{{ Reorder }}');
     }
 }

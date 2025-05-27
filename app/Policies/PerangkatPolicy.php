@@ -63,7 +63,7 @@ class PerangkatPolicy
      */
     public function forceDelete(User $user, Perangkat $perangkat): bool
     {
-        return $user->can('force_delete_perangkat');
+        return $user->can('{{ ForceDelete }}');
     }
 
     /**
@@ -71,7 +71,7 @@ class PerangkatPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_perangkat');
+        return $user->can('{{ ForceDeleteAny }}');
     }
 
     /**
@@ -79,7 +79,7 @@ class PerangkatPolicy
      */
     public function restore(User $user, Perangkat $perangkat): bool
     {
-        return $user->can('restore_perangkat');
+        return $user->can('{{ Restore }}');
     }
 
     /**
@@ -87,7 +87,7 @@ class PerangkatPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_perangkat');
+        return $user->can('{{ RestoreAny }}');
     }
 
     /**
@@ -95,7 +95,7 @@ class PerangkatPolicy
      */
     public function replicate(User $user, Perangkat $perangkat): bool
     {
-        return $user->can('replicate_perangkat');
+        return $user->can('{{ Replicate }}');
     }
 
     /**
@@ -103,6 +103,6 @@ class PerangkatPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_perangkat');
+        return $user->can('{{ Reorder }}');
     }
 }

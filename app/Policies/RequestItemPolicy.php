@@ -2,18 +2,20 @@
 
 namespace App\Policies;
 
-use App\Models\RequestItem;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
+use App\Models\RequestItem;
+use Illuminate\Auth\Access\HandlesAuthorization;
 
 class RequestItemPolicy
 {
+    use HandlesAuthorization;
+
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_requestitem');
+        return $user->can('view_any_request::item');
     }
 
     /**
@@ -21,7 +23,7 @@ class RequestItemPolicy
      */
     public function view(User $user, RequestItem $requestItem): bool
     {
-        return $user->can('view_requestitem');
+        return $user->can('view_request::item');
     }
 
     /**
@@ -29,7 +31,7 @@ class RequestItemPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_requestitem');
+        return $user->can('create_request::item');
     }
 
     /**
@@ -37,7 +39,7 @@ class RequestItemPolicy
      */
     public function update(User $user, RequestItem $requestItem): bool
     {
-        return $user->can('update_requestitem');
+        return $user->can('update_request::item');
     }
 
     /**
@@ -45,22 +47,62 @@ class RequestItemPolicy
      */
     public function delete(User $user, RequestItem $requestItem): bool
     {
-        return $user->can('delete_requestitem');
+        return $user->can('delete_request::item');
     }
 
     /**
-     * Determine whether the user can restore the model.
+     * Determine whether the user can bulk delete.
      */
-    public function restore(User $user, RequestItem $requestItem): bool
+    public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_requestitem');
+        return $user->can('delete_any_request::item');
     }
 
     /**
-     * Determine whether the user can permanently delete the model.
+     * Determine whether the user can permanently delete.
      */
     public function forceDelete(User $user, RequestItem $requestItem): bool
     {
-        return $user->can('force_delete_requestitem');
+        return $user->can('force_delete_request::item');
+    }
+
+    /**
+     * Determine whether the user can permanently bulk delete.
+     */
+    public function forceDeleteAny(User $user): bool
+    {
+        return $user->can('force_delete_any_request::item');
+    }
+
+    /**
+     * Determine whether the user can restore.
+     */
+    public function restore(User $user, RequestItem $requestItem): bool
+    {
+        return $user->can('restore_request::item');
+    }
+
+    /**
+     * Determine whether the user can bulk restore.
+     */
+    public function restoreAny(User $user): bool
+    {
+        return $user->can('restore_any_request::item');
+    }
+
+    /**
+     * Determine whether the user can replicate.
+     */
+    public function replicate(User $user, RequestItem $requestItem): bool
+    {
+        return $user->can('replicate_request::item');
+    }
+
+    /**
+     * Determine whether the user can reorder.
+     */
+    public function reorder(User $user): bool
+    {
+        return $user->can('reorder_request::item');
     }
 }

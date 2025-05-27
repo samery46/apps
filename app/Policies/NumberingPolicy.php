@@ -2,12 +2,14 @@
 
 namespace App\Policies;
 
-use App\Models\Numbering;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
+use App\Models\Numbering;
+use Illuminate\Auth\Access\HandlesAuthorization;
 
 class NumberingPolicy
 {
+    use HandlesAuthorization;
+
     /**
      * Determine whether the user can view any models.
      */
@@ -49,18 +51,58 @@ class NumberingPolicy
     }
 
     /**
-     * Determine whether the user can restore the model.
+     * Determine whether the user can bulk delete.
      */
-    public function restore(User $user, Numbering $numbering): bool
+    public function deleteAny(User $user): bool
     {
         return $user->can('delete_any_numbering');
     }
 
     /**
-     * Determine whether the user can permanently delete the model.
+     * Determine whether the user can permanently delete.
      */
     public function forceDelete(User $user, Numbering $numbering): bool
     {
         return $user->can('force_delete_numbering');
+    }
+
+    /**
+     * Determine whether the user can permanently bulk delete.
+     */
+    public function forceDeleteAny(User $user): bool
+    {
+        return $user->can('force_delete_any_numbering');
+    }
+
+    /**
+     * Determine whether the user can restore.
+     */
+    public function restore(User $user, Numbering $numbering): bool
+    {
+        return $user->can('restore_numbering');
+    }
+
+    /**
+     * Determine whether the user can bulk restore.
+     */
+    public function restoreAny(User $user): bool
+    {
+        return $user->can('restore_any_numbering');
+    }
+
+    /**
+     * Determine whether the user can replicate.
+     */
+    public function replicate(User $user, Numbering $numbering): bool
+    {
+        return $user->can('replicate_numbering');
+    }
+
+    /**
+     * Determine whether the user can reorder.
+     */
+    public function reorder(User $user): bool
+    {
+        return $user->can('reorder_numbering');
     }
 }

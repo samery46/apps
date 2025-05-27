@@ -2,12 +2,14 @@
 
 namespace App\Policies;
 
-use App\Models\Kategori;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
+use App\Models\Kategori;
+use Illuminate\Auth\Access\HandlesAuthorization;
 
 class KategoriPolicy
 {
+    use HandlesAuthorization;
+
     /**
      * Determine whether the user can view any models.
      */
@@ -49,18 +51,58 @@ class KategoriPolicy
     }
 
     /**
-     * Determine whether the user can restore the model.
+     * Determine whether the user can bulk delete.
      */
-    public function restore(User $user, Kategori $kategori): bool
+    public function deleteAny(User $user): bool
     {
         return $user->can('delete_any_kategori');
     }
 
     /**
-     * Determine whether the user can permanently delete the model.
+     * Determine whether the user can permanently delete.
      */
     public function forceDelete(User $user, Kategori $kategori): bool
     {
         return $user->can('force_delete_kategori');
+    }
+
+    /**
+     * Determine whether the user can permanently bulk delete.
+     */
+    public function forceDeleteAny(User $user): bool
+    {
+        return $user->can('force_delete_any_kategori');
+    }
+
+    /**
+     * Determine whether the user can restore.
+     */
+    public function restore(User $user, Kategori $kategori): bool
+    {
+        return $user->can('restore_kategori');
+    }
+
+    /**
+     * Determine whether the user can bulk restore.
+     */
+    public function restoreAny(User $user): bool
+    {
+        return $user->can('restore_any_kategori');
+    }
+
+    /**
+     * Determine whether the user can replicate.
+     */
+    public function replicate(User $user, Kategori $kategori): bool
+    {
+        return $user->can('replicate_kategori');
+    }
+
+    /**
+     * Determine whether the user can reorder.
+     */
+    public function reorder(User $user): bool
+    {
+        return $user->can('reorder_kategori');
     }
 }

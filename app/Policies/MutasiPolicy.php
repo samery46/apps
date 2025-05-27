@@ -2,12 +2,14 @@
 
 namespace App\Policies;
 
-use App\Models\Mutasi;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
+use App\Models\Mutasi;
+use Illuminate\Auth\Access\HandlesAuthorization;
 
 class MutasiPolicy
 {
+    use HandlesAuthorization;
+
     /**
      * Determine whether the user can view any models.
      */
@@ -49,18 +51,58 @@ class MutasiPolicy
     }
 
     /**
-     * Determine whether the user can restore the model.
+     * Determine whether the user can bulk delete.
      */
-    public function restore(User $user, Mutasi $mutasi): bool
+    public function deleteAny(User $user): bool
     {
         return $user->can('delete_any_mutasi');
     }
 
     /**
-     * Determine whether the user can permanently delete the model.
+     * Determine whether the user can permanently delete.
      */
     public function forceDelete(User $user, Mutasi $mutasi): bool
     {
         return $user->can('force_delete_mutasi');
+    }
+
+    /**
+     * Determine whether the user can permanently bulk delete.
+     */
+    public function forceDeleteAny(User $user): bool
+    {
+        return $user->can('force_delete_any_mutasi');
+    }
+
+    /**
+     * Determine whether the user can restore.
+     */
+    public function restore(User $user, Mutasi $mutasi): bool
+    {
+        return $user->can('restore_mutasi');
+    }
+
+    /**
+     * Determine whether the user can bulk restore.
+     */
+    public function restoreAny(User $user): bool
+    {
+        return $user->can('restore_any_mutasi');
+    }
+
+    /**
+     * Determine whether the user can replicate.
+     */
+    public function replicate(User $user, Mutasi $mutasi): bool
+    {
+        return $user->can('replicate_mutasi');
+    }
+
+    /**
+     * Determine whether the user can reorder.
+     */
+    public function reorder(User $user): bool
+    {
+        return $user->can('reorder_mutasi');
     }
 }

@@ -63,7 +63,7 @@ class MaterialPolicy
      */
     public function forceDelete(User $user, Material $material): bool
     {
-        return $user->can('force_delete_material');
+        return $user->can('{{ ForceDelete }}');
     }
 
     /**
@@ -71,7 +71,7 @@ class MaterialPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_material');
+        return $user->can('{{ ForceDeleteAny }}');
     }
 
     /**
@@ -79,7 +79,7 @@ class MaterialPolicy
      */
     public function restore(User $user, Material $material): bool
     {
-        return $user->can('restore_material');
+        return $user->can('{{ Restore }}');
     }
 
     /**
@@ -87,7 +87,7 @@ class MaterialPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_material');
+        return $user->can('{{ RestoreAny }}');
     }
 
     /**
@@ -95,7 +95,7 @@ class MaterialPolicy
      */
     public function replicate(User $user, Material $material): bool
     {
-        return $user->can('replicate_material');
+        return $user->can('{{ Replicate }}');
     }
 
     /**
@@ -103,6 +103,6 @@ class MaterialPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_material');
+        return $user->can('{{ Reorder }}');
     }
 }

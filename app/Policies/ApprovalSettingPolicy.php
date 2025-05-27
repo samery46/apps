@@ -3,10 +3,10 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\Karyawan;
+use App\Models\ApprovalSetting;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class KaryawanPolicy
+class ApprovalSettingPolicy
 {
     use HandlesAuthorization;
 
@@ -15,15 +15,15 @@ class KaryawanPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_karyawan');
+        return $user->can('view_any_approval::setting');
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Karyawan $karyawan): bool
+    public function view(User $user, ApprovalSetting $approvalSetting): bool
     {
-        return $user->can('view_karyawan');
+        return $user->can('view_approval::setting');
     }
 
     /**
@@ -31,23 +31,23 @@ class KaryawanPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_karyawan');
+        return $user->can('create_approval::setting');
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Karyawan $karyawan): bool
+    public function update(User $user, ApprovalSetting $approvalSetting): bool
     {
-        return $user->can('update_karyawan');
+        return $user->can('update_approval::setting');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Karyawan $karyawan): bool
+    public function delete(User $user, ApprovalSetting $approvalSetting): bool
     {
-        return $user->can('delete_karyawan');
+        return $user->can('delete_approval::setting');
     }
 
     /**
@@ -55,15 +55,15 @@ class KaryawanPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_karyawan');
+        return $user->can('delete_any_approval::setting');
     }
 
     /**
      * Determine whether the user can permanently delete.
      */
-    public function forceDelete(User $user, Karyawan $karyawan): bool
+    public function forceDelete(User $user, ApprovalSetting $approvalSetting): bool
     {
-        return $user->can('{{ ForceDelete }}');
+        return $user->can('force_delete_approval::setting');
     }
 
     /**
@@ -71,15 +71,15 @@ class KaryawanPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('{{ ForceDeleteAny }}');
+        return $user->can('force_delete_any_approval::setting');
     }
 
     /**
      * Determine whether the user can restore.
      */
-    public function restore(User $user, Karyawan $karyawan): bool
+    public function restore(User $user, ApprovalSetting $approvalSetting): bool
     {
-        return $user->can('{{ Restore }}');
+        return $user->can('restore_approval::setting');
     }
 
     /**
@@ -87,15 +87,15 @@ class KaryawanPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('{{ RestoreAny }}');
+        return $user->can('restore_any_approval::setting');
     }
 
     /**
      * Determine whether the user can replicate.
      */
-    public function replicate(User $user, Karyawan $karyawan): bool
+    public function replicate(User $user, ApprovalSetting $approvalSetting): bool
     {
-        return $user->can('{{ Replicate }}');
+        return $user->can('replicate_approval::setting');
     }
 
     /**
@@ -103,6 +103,6 @@ class KaryawanPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('{{ Reorder }}');
+        return $user->can('reorder_approval::setting');
     }
 }

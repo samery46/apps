@@ -63,7 +63,7 @@ class PlantPolicy
      */
     public function forceDelete(User $user, Plant $plant): bool
     {
-        return $user->can('force_delete_plant');
+        return $user->can('{{ ForceDelete }}');
     }
 
     /**
@@ -71,7 +71,7 @@ class PlantPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_plant');
+        return $user->can('{{ ForceDeleteAny }}');
     }
 
     /**
@@ -79,7 +79,7 @@ class PlantPolicy
      */
     public function restore(User $user, Plant $plant): bool
     {
-        return $user->can('restore_plant');
+        return $user->can('{{ Restore }}');
     }
 
     /**
@@ -87,7 +87,7 @@ class PlantPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_plant');
+        return $user->can('{{ RestoreAny }}');
     }
 
     /**
@@ -95,7 +95,7 @@ class PlantPolicy
      */
     public function replicate(User $user, Plant $plant): bool
     {
-        return $user->can('replicate_plant');
+        return $user->can('{{ Replicate }}');
     }
 
     /**
@@ -103,6 +103,6 @@ class PlantPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_plant');
+        return $user->can('{{ Reorder }}');
     }
 }

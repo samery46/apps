@@ -63,7 +63,7 @@ class PinjamPolicy
      */
     public function forceDelete(User $user, Pinjam $pinjam): bool
     {
-        return $user->can('force_delete_pinjam');
+        return $user->can('{{ ForceDelete }}');
     }
 
     /**
@@ -71,7 +71,7 @@ class PinjamPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_pinjam');
+        return $user->can('{{ ForceDeleteAny }}');
     }
 
     /**
@@ -79,7 +79,7 @@ class PinjamPolicy
      */
     public function restore(User $user, Pinjam $pinjam): bool
     {
-        return $user->can('restore_pinjam');
+        return $user->can('{{ Restore }}');
     }
 
     /**
@@ -87,7 +87,7 @@ class PinjamPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_pinjam');
+        return $user->can('{{ RestoreAny }}');
     }
 
     /**
@@ -95,7 +95,7 @@ class PinjamPolicy
      */
     public function replicate(User $user, Pinjam $pinjam): bool
     {
-        return $user->can('replicate_pinjam');
+        return $user->can('{{ Replicate }}');
     }
 
     /**
@@ -103,6 +103,6 @@ class PinjamPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_pinjam');
+        return $user->can('{{ Reorder }}');
     }
 }
