@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Auth;
 use Filament\Tables\Actions\BulkAction;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\AssetRequestExport;
+use App\Models\AssetRequest;
 
 class ListAssetRequests extends ListRecords
 {
@@ -219,6 +220,24 @@ class ListAssetRequests extends ListRecords
                         'approved' => 'Approved',
                         'rejected' => 'Rejected',
                     ]),
+
+                SelectFilter::make('plant_id')
+                        ->label('Filter by Plant')
+                        ->options(function () {
+                            if (auth()->check() && auth()->user()->id === 1) {
+                                // Admin dapat melihat semua plant
+                                return AssetRequest::with('plant')
+                                    ->get()
+                                    ->sortBy(fn ($item) => $item->plant->kode)
+                                    ->mapWithKeys(fn ($item) => [$item->plant_id => "{$item->plant->kode} - {$item->plant->nama}"])
+                                    ->toArray();
+                            } else {
+                                return auth()->user()->plants
+                                    ->sortBy('kode')
+                                    ->mapWithKeys(fn ($plant) => [$plant->id => "{$plant->kode} - {$plant->nama}"])
+                                    ->toArray();
+                            }
+                        }),
             ])
             ->bulkActions([
                 BulkAction::make('export')

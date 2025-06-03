@@ -25,6 +25,7 @@ use Filament\Tables\Filters\SelectFilter;
 // use App\Models\Plant;
 use Filament\Tables\Filters\TextFilter;
 
+
 class AssetUsageResource extends Resource
 {
     protected static ?string $model = AssetUsage::class;

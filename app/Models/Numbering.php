@@ -41,4 +41,29 @@ class Numbering extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    protected static function booted()
+    {
+
+        static::creating(function ($numbering) {
+            $month = now()->format('m');
+            $year = now()->format('Y');
+
+            $plant = \App\Models\Plant::find($numbering->plant_id);
+            $plantKode = $plant?->kode ?? 'XXX';
+
+            $departemen = \App\Models\Departemen::find($numbering->departemen_id);
+            $deptKode = $departemen?->kode ?? 'XXX';
+
+            $count = self::whereMonth('created_at', now()->month)
+                        ->whereYear('created_at', now()->year)
+                        ->where('plant_id', $numbering->plant_id)
+                        ->count();
+
+            $urut = str_pad($count + 1, 3, '0', STR_PAD_LEFT);
+
+            $numbering->transaction_number = "{$urut}/{$plantKode}/{$deptKode}/{$month}/{$year}";
+        });
+    }
+
 }
