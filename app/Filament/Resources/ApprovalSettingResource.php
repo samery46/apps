@@ -106,7 +106,7 @@ class ApprovalSettingResource extends Resource
                             1 => 'Level 1 (FAM/FAS Plant)',
                             2 => 'Level 2 (FA HO)',
                             3 => 'Level 3 (FAM HO)',
-                            default => 'Unknown',
+                            // default => 'Unknown',
                         };
                     }),
                 Tables\Columns\TextColumn::make('user.name')->label('Approver')
