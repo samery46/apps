@@ -74,7 +74,7 @@ class ApprovalSettingResource extends Resource
                             3 => 'Level 3 (FAM HO)',
                         ])
                         ->required()
-                        ->numeric() // paksa jadi int
+                        ->default(1) // Pastikan nilai default berupa integer
                         ->columnSpan(3)
                         ->label('Approval Level'),
                     Forms\Components\TextInput::make('position')
@@ -103,13 +103,14 @@ class ApprovalSettingResource extends Resource
                     ->label('Approval Level')
                     ->sortable()
                     ->formatStateUsing(function ($state) {
-                        return match ($state) {
+                        return match ((int) $state) { // Pastikan dikonversi ke integer
                             1 => 'Level 1 (FAM/FAS Plant)',
                             2 => 'Level 2 (FA HO)',
                             3 => 'Level 3 (FAM HO)',
                             default => 'Unknown',
                         };
                     }),
+
                 Tables\Columns\TextColumn::make('user.name')->label('Approver')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('position')
