@@ -74,6 +74,7 @@ class MutasiResource extends Resource
                             ->default(Carbon::today()->format('Y-m-d'))
                             ->columnSpan(1)
                             ->required(),
+                            
 
                         Forms\Components\Select::make('periode')
                             ->label('Periode')

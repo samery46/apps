@@ -31,6 +31,9 @@ use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Resources\Pages\ViewRecord;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use Filament\Tables\Actions\BulkAction;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\AssetRequestExport;
 
 class AssetRequestResource extends Resource
 {
@@ -71,6 +74,7 @@ class AssetRequestResource extends Resource
                                 $query->where('nama', 'like', "%{$search}%")
                                     ->orWhere('kode', 'like', "%{$search}%"); // Tambahkan pencarian juga berdasarkan 'kode'
                             })
+                                ->whereIn('id', auth()->user()->plants->pluck('id')) // Filter berdasarkan hak akses user
                                 ->get(['kode', 'nama', 'id']) // Ambil kolom kode, nama, dan id
                                 ->mapWithKeys(function ($plant) {
                                     return [$plant->id => $plant->kode . ' - TSP ' . $plant->nama]; // Format opsi dengan kode - nama
@@ -154,6 +158,7 @@ class AssetRequestResource extends Resource
                         ->columnSpan(1)
                         ->maxLength(255)
                         ->disabled(fn ($record) => $record && $record->status === 'approved'),
+
                     Forms\Components\Select::make('cost_center_id')
                         ->label('Cost Center')
                         ->placeholder('Cari cost center')
@@ -161,23 +166,58 @@ class AssetRequestResource extends Resource
                         ->searchable()
                         ->columnSpan(4)
                         ->preload()
-                        ->getSearchResultsUsing(function (string $search) {
-                            // return Plant::where('nama', 'like', "%{$search}%")
-                            return CostCenter::where(function ($query) use ($search) {
-                                $query->where('cost_center', 'like', "%{$search}%")
-                                    ->orWhere('name', 'like', "%{$search}%"); // Tambahkan pencarian juga berdasarkan 'name'
-                            })
-                                ->get(['cost_center', 'name', 'id']) // Ambil kolom kode, nama, dan id
+                        ->reactive() // Membuat komponen bereaksi terhadap perubahan form
+                        ->getSearchResultsUsing(function (string $search, $state, $get) {
+                            $plantId = $get('plant_id'); // Ambil plant_id yang dipilih
+
+                            if (!$plantId) {
+                                return []; // Jika plant_id belum dipilih, kosongkan pilihan
+                            }
+
+                            return CostCenter::where('plant_id', $plantId) // Filter berdasarkan plant_id yang dipilih
+                                ->where(function ($query) use ($search) {
+                                    $query->where('cost_center', 'like', "%{$search}%")
+                                        ->orWhere('name', 'like', "%{$search}%");
+                                })
+                                ->get(['cost_center', 'name', 'id'])
                                 ->mapWithKeys(function ($costcenter) {
-                                    return [$costcenter->id => $costcenter->cost_center . ' - ' . $costcenter->name]; // Format opsi dengan kode - nama
+                                    return [$costcenter->id => $costcenter->cost_center . ' - ' . $costcenter->name];
                                 })
                                 ->toArray();
                         })
                         ->getOptionLabelUsing(function ($value) {
                             $costcenter = CostCenter::find($value);
-                            return $costcenter ? $costcenter->cost_center . ' - ' . $costcenter->name : null; // Format label dengan kode - nama
+                            return $costcenter ? $costcenter->cost_center . ' - ' . $costcenter->name : null;
                         })
                         ->disabled(fn ($record) => $record && $record->status === 'approved'),
+
+
+
+
+                    // Forms\Components\Select::make('cost_center_id')
+                    //     ->label('Cost Center')
+                    //     ->placeholder('Cari cost center')
+                    //     ->required()
+                    //     ->searchable()
+                    //     ->columnSpan(4)
+                    //     ->preload()
+                    //     ->getSearchResultsUsing(function (string $search) {
+                    //         // return Plant::where('nama', 'like', "%{$search}%")
+                    //         return CostCenter::where(function ($query) use ($search) {
+                    //             $query->where('cost_center', 'like', "%{$search}%")
+                    //                 ->orWhere('name', 'like', "%{$search}%"); // Tambahkan pencarian juga berdasarkan 'name'
+                    //         })
+                    //             ->get(['cost_center', 'name', 'id']) // Ambil kolom kode, nama, dan id
+                    //             ->mapWithKeys(function ($costcenter) {
+                    //                 return [$costcenter->id => $costcenter->cost_center . ' - ' . $costcenter->name]; // Format opsi dengan kode - nama
+                    //             })
+                    //             ->toArray();
+                    //     })
+                    //     ->getOptionLabelUsing(function ($value) {
+                    //         $costcenter = CostCenter::find($value);
+                    //         return $costcenter ? $costcenter->cost_center . ' - ' . $costcenter->name : null; // Format label dengan kode - nama
+                    //     })
+                    //     ->disabled(fn ($record) => $record && $record->status === 'approved'),
                 ])->columns(8),
             Forms\Components\Section::make('Informasi')
                 ->description('Detail Barang')
@@ -242,6 +282,9 @@ class AssetRequestResource extends Resource
                             'rejected' => 'Rejected',
                         ])
                         ->disabled(),
+                    Forms\Components\Hidden::make('user_id')
+                        ->default(fn() => Auth::id())
+                        ->required(),
                 ])->columns(8),
             Forms\Components\Section::make('Riwayat Approval')
                 ->schema([
@@ -308,6 +351,10 @@ class AssetRequestResource extends Resource
                 ->label('Lokasi')
                 ->searchable()
                 ->toggleable(isToggledHiddenByDefault: true),
+            Tables\Columns\TextColumn::make('user.name')
+                    ->label('Created By')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: false),
             Tables\Columns\TextColumn::make('status')
                 ->toggleable(isToggledHiddenByDefault: true),
             Tables\Columns\TextColumn::make('created_at')
@@ -396,6 +443,16 @@ class AssetRequestResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
+                // BulkAction::make('export')
+                //     ->label('Export')
+                //     ->color('info')
+                //     ->action(function ($records) {
+                //         $recordIds = $records->pluck('id')->toArray();
+                //         $date = date('Y-m-d'); // Mendapatkan tanggal saat ini dalam format YYYY-MM-DD
+                //         $fileName = "AssetRequest-{$date}.xlsx"; // Menambahkan tanggal pada nama file
+                //         return Excel::download(new AssetRequestExport($recordIds), $fileName);
+                //     }),
+
             ]);
     }
 

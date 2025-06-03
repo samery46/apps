@@ -11,13 +11,17 @@ use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Notifications\Notification;
-
+use App\Models\User;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Resources\Resource;
 use Filament\Forms;
 use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Filament\Tables\Actions\BulkAction;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\AssetRequestExport;
 
 class ListAssetRequests extends ListRecords
 {
@@ -113,6 +117,10 @@ class ListAssetRequests extends ListRecords
                     ->sortable()
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('user.name')
+                    ->label('Created By')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -211,6 +219,18 @@ class ListAssetRequests extends ListRecords
                         'approved' => 'Approved',
                         'rejected' => 'Rejected',
                     ]),
+            ])
+            ->bulkActions([
+                BulkAction::make('export')
+                    ->label('Export')
+                    ->color('info')
+                    ->action(function ($records) {
+                        $recordIds = $records->pluck('id')->toArray();
+                        $date = date('Y-m-d'); // Mendapatkan tanggal saat ini dalam format YYYY-MM-DD
+                        $fileName = "AssetRequest-{$date}.xlsx"; // Menambahkan tanggal pada nama file
+                        return Excel::download(new AssetRequestExport($recordIds), $fileName);
+                    }),
             ]);
+
     }
 }

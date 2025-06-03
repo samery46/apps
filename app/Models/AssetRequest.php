@@ -96,6 +96,11 @@ class AssetRequest extends Model
         return $this->belongsTo(AssetGroup::class);
     }
 
+        public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
 
 public function approvals(): HasMany
     {
