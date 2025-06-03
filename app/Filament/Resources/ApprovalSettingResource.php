@@ -74,6 +74,7 @@ class ApprovalSettingResource extends Resource
                             3 => 'Level 3 (FAM HO)',
                         ])
                         ->required()
+                        ->numeric() // paksa jadi int
                         ->columnSpan(3)
                         ->label('Approval Level'),
                     Forms\Components\TextInput::make('position')
@@ -106,7 +107,7 @@ class ApprovalSettingResource extends Resource
                             1 => 'Level 1 (FAM/FAS Plant)',
                             2 => 'Level 2 (FA HO)',
                             3 => 'Level 3 (FAM HO)',
-                            // default => 'Unknown',
+                            default => 'Unknown',
                         };
                     }),
                 Tables\Columns\TextColumn::make('user.name')->label('Approver')
