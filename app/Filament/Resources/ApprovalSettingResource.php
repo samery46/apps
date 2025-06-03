@@ -84,7 +84,8 @@ class ApprovalSettingResource extends Resource
                         ->default(null),
                     Forms\Components\Toggle::make('is_aktif')
                         ->required()
-                        ->columnSpan(2),
+                        ->columnSpan(2)
+                        ->default(true) // Menjadikan nilai default aktif (true)
                     ])->columns(8),
             ]);
     }
@@ -96,6 +97,7 @@ class ApprovalSettingResource extends Resource
                 Tables\Columns\TextColumn::make('plant.kode')
                     ->label('Plant')
                     ->searchable()
+                    ->sortable()
                     ->getStateUsing(function ($record) {
                         return $record->plant->kode . ' - TSP ' . $record->plant->nama;
                     }),
@@ -170,5 +172,4 @@ public static function getPermissionPrefixes(): array
             'delete_any'
         ];
     }
-
 }
