@@ -148,9 +148,9 @@ class AssetRequestResource extends Resource
                         ->columnSpan(3)
                         ->disabled(fn ($record) => $record && $record->status === 'approved'),
                     Forms\Components\TextInput::make('usage_period')
-                        ->label('Penggunaan')
+                        ->label('Umur')
                         ->columnSpan(1)
-                        ->placeholder('( Tahun )')
+                        ->placeholder('(Tahun)')
                         ->maxLength(255)
                         ->disabled(fn ($record) => $record && $record->status === 'approved'),
                     Forms\Components\TextInput::make('quantity')
@@ -592,7 +592,7 @@ class AssetRequestResource extends Resource
             ->hiddenLabel();
     }
 
-public static function getPermissionPrefixes(): array
+    public static function getPermissionPrefixes(): array
     {
         return [
             'view',
@@ -602,6 +602,17 @@ public static function getPermissionPrefixes(): array
             'delete',
             'delete_any'
         ];
+    }
+
+        protected function getTableQuery(): Builder
+    {
+        $user = auth()->user();
+
+        if ($user->id === 1) {
+            return AssetRequest::query();
+        }
+
+        return AssetRequest::query()->whereIn('plant_id', $user->plants->pluck('id'));
     }
 
 }

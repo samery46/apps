@@ -74,7 +74,7 @@ class MutasiResource extends Resource
                             ->default(Carbon::today()->format('Y-m-d'))
                             ->columnSpan(1)
                             ->required(),
-                            
+
 
                         Forms\Components\Select::make('periode')
                             ->label('Periode')
@@ -567,8 +567,10 @@ class MutasiResource extends Resource
                                 })
                                 ->toArray();
                         } else {
-                            // Jika bukan user dengan ID 1, ambil plant yang dimiliki oleh user
-                            return auth()->user()->plants->pluck('nama', 'id')->toArray();
+                                return auth()->user()->plants
+                                    ->sortBy('kode')
+                                    ->mapWithKeys(fn ($plant) => [$plant->id => "{$plant->kode} - {$plant->nama}"])
+                                    ->toArray();
                         }
                     }),
                     Filter::make('tgl_range')

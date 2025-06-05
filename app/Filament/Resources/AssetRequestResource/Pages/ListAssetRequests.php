@@ -23,6 +23,9 @@ use Filament\Tables\Actions\BulkAction;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\AssetRequestExport;
 use App\Models\AssetRequest;
+use Illuminate\Database\Eloquent\Builder;
+
+
 
 class ListAssetRequests extends ListRecords
 {
@@ -34,6 +37,7 @@ class ListAssetRequests extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
+
 
     public function table(Table $table): Table
      {
@@ -238,6 +242,7 @@ class ListAssetRequests extends ListRecords
                                     ->toArray();
                             }
                         }),
+
             ])
             ->bulkActions([
                 BulkAction::make('export')
@@ -252,4 +257,22 @@ class ListAssetRequests extends ListRecords
             ]);
 
     }
+
+    public function getTableQuery(): Builder
+    {
+        $query = AssetRequest::query();
+
+        // Menerapkan filter berdasarkan akses plant_id pengguna
+        if (auth()->check() && auth()->user()->id === 1) {
+            // Jika user memiliki ID 1, dianggap sebagai admin
+            // Tidak ada filter tambahan yang diterapkan karena admin bisa mengakses semua plant
+        } else {
+            // Jika bukan user dengan ID 1, ambil plant yang dimiliki oleh user
+            $userPlantIds = auth()->user()->plants->pluck('id')->toArray();
+            $query->whereIn('plant_id', $userPlantIds);
+        }
+
+        return $query;
+    }
+
 }
