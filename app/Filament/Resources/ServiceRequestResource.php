@@ -69,6 +69,8 @@ class ServiceRequestResource extends Resource
                                     }
                                 }
                             }),
+
+
                         Forms\Components\TextInput::make('kode')
                             ->label('Kode Plant')
                             ->disabled()

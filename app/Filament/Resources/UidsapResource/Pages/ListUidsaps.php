@@ -4,6 +4,7 @@ namespace App\Filament\Resources\UidsapResource\Pages;
 
 use App\Filament\Resources\UidsapResource;
 use App\Imports\UidsapImport;
+use App\Models\Uidsap;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Forms\Components\FileUpload;
@@ -52,9 +53,22 @@ class ListUidsaps extends ListRecords
     }
 
 
-    // Query untuk memfilter/tidak menampilkan perangkat yang tidak aktif
-    // protected function getTableQuery(): Builder
-    // {
-    //     return parent::getTableQuery()->where('is_aktif', true);
-    // }
+    public function getTableQuery(): Builder
+    {
+        $query = Uidsap::query(); // Menggunakan UIDSAP sebagai query utama
+
+        if (auth()->check() && auth()->user()->id === 1) {
+            // Admin melihat semua data, tanpa filter tambahan
+        } else {
+            // Filter berdasarkan plant_id yang dimiliki user melalui tabel Karyawan
+            $userPlantIds = auth()->user()->plants->pluck('id')->toArray();
+
+            // Pastikan hanya UIDSAP dengan karyawan terkait plant_id milik user yang tampil
+            $query->whereHas('karyawan', function ($q) use ($userPlantIds) {
+                $q->whereIn('plant_id', $userPlantIds);
+            });
+        }
+
+        return $query;
+    }
 }

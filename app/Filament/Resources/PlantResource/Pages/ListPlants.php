@@ -19,8 +19,8 @@ class ListPlants extends ListRecords
         ];
     }
 
-    // protected function getTableQuery(): Builder
-    // {
-    //     return parent::getTableQuery()->where('is_aktif', true);
-    // }
+    protected function getTableQuery(): Builder
+    {
+        return parent::getTableQuery()->where('is_aktif', true);
+    }
 }

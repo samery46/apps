@@ -53,10 +53,10 @@ class ListKaryawans extends ListRecords
     }
 
     // Query untuk memfilter/tidak menampilkan karyawan yang tidak aktif
-    protected function getTableQuery(): Builder
-    {
-        return parent::getTableQuery()->where('is_aktif', true);
-    }
+    // protected function getTableQuery(): Builder
+    // {
+    //     return parent::getTableQuery()->where('is_aktif', true);
+    // }
 
     // public function getTableQuery(): Builder
     // {
@@ -74,4 +74,23 @@ class ListKaryawans extends ListRecords
 
     //     return $query;
     // }
+
+    public function getTableQuery(): Builder
+    {
+    $query = Karyawan::query()->where('is_aktif', true); // Menambahkan filter agar hanya data aktif
+
+    // Menerapkan filter berdasarkan akses plant_id pengguna
+    if (auth()->check() && auth()->user()->id === 1) {
+        // Jika user adalah admin, tidak ada filter tambahan
+    } else {
+        // Jika bukan admin, hanya ambil plant yang dimiliki oleh user
+        $userPlantIds = auth()->user()->plants->pluck('id')->toArray();
+        $query->whereIn('plant_id', $userPlantIds);
+    }
+
+    return $query;
+    }
+
+
+
 }

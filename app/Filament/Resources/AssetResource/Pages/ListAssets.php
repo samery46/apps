@@ -4,6 +4,7 @@ namespace App\Filament\Resources\AssetResource\Pages;
 
 use App\Filament\Resources\AssetResource;
 use App\Imports\AssetsImport;
+use App\Models\Asset;
 use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Resources\Pages\ListRecords;
@@ -49,5 +50,22 @@ class ListAssets extends ListRecords
                 ->url(route('import-assets'))
                 ->color('warning'),
         ];
+    }
+
+
+    public function getTableQuery(): Builder
+    {
+    $query = Asset::query()->where('is_aktif', true); // Menambahkan filter agar hanya data aktif
+
+    // Menerapkan filter berdasarkan akses plant_id pengguna
+    if (auth()->check() && auth()->user()->id === 1) {
+        // Jika user adalah admin, tidak ada filter tambahan
+    } else {
+        // Jika bukan admin, hanya ambil plant yang dimiliki oleh user
+        $userPlantIds = auth()->user()->plants->pluck('id')->toArray();
+        $query->whereIn('plant_id', $userPlantIds);
+    }
+
+    return $query;
     }
 }

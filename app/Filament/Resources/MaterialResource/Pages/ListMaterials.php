@@ -4,12 +4,14 @@ namespace App\Filament\Resources\MaterialResource\Pages;
 
 use App\Filament\Resources\MaterialResource;
 use App\Imports\MaterialImport;
+use App\Models\Material;
 use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Database\Eloquent\Builder;
 
 class ListMaterials extends ListRecords
 {
@@ -49,5 +51,23 @@ class ListMaterials extends ListRecords
                 ->color('warning'),
 
         ];
+    }
+
+    public function getTableQuery(): Builder
+    {
+        $query = Material::query()->where('is_aktif', true); // Hanya data aktif
+
+        if (auth()->check() && auth()->user()->id === 1) {
+            // Admin melihat semua data, tanpa filter tambahan
+        } else {
+            // Filter berdasarkan plant_id yang dimiliki user dari tabel pivot `material_plant`
+            $userPlantIds = auth()->user()->plants->pluck('id')->toArray();
+
+            $query->whereHas('plants', function ($q) use ($userPlantIds) {
+                $q->whereIn('plant_id', $userPlantIds);
+            });
+        }
+
+        return $query;
     }
 }
