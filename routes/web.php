@@ -5,6 +5,7 @@ use App\Imports\AssetsImport;
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Route;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Http\Controllers\AssetRequestExportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -69,3 +70,6 @@ Route::get(
 Route::get('/', function () {
     return redirect()->route('filament.admin.auth.login');
 });
+
+Route::get('/asset-requests/{id}/export-pdf', [AssetRequestExportController::class, 'export'])->name('asset-requests.export-pdf');
+

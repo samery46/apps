@@ -6,8 +6,9 @@ use App\Models\Copack;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithTitle;
 
-class CopackExport implements FromCollection, WithMapping, WithHeadings
+class CopackExport implements FromCollection, WithMapping, WithHeadings, WithTitle
 {
 
     protected $recordIds;
@@ -31,6 +32,19 @@ class CopackExport implements FromCollection, WithMapping, WithHeadings
 
         $this->rowNumber++;
 
+        $typeTransaksi = $copack->type_id ? $copack->type->nama : '';
+            $pengurangTypes = [
+                'FG Delivery',
+                'FG Rusak Repro',
+                'RM Out Produksi',
+                'RM Out Repro',
+                'RM Reject Produksi',
+            ];
+
+            $qty = in_array($typeTransaksi, $pengurangTypes)
+                ? -1 * $copack->qty
+                : $copack->qty;
+
         return [
             $this->rowNumber,
             $copack->plant_id ? $copack->plant->kode . ' - ' . $copack->plant->nama : '',
@@ -38,7 +52,8 @@ class CopackExport implements FromCollection, WithMapping, WithHeadings
             $copack->material_id ? $copack->material->kategori_deskripsi : '',
             $copack->material_id ? $copack->material->kode : '',
             $copack->material_id ? $copack->material->nama : '',
-            $copack->qty,
+            // $copack->qty,
+            $qty,
             $copack->material_id ? $copack->material->uom : '',
             $copack->type_id ? $copack->type->nama : '',
             $copack->vendor,
@@ -70,4 +85,11 @@ class CopackExport implements FromCollection, WithMapping, WithHeadings
             'User',
         ];
     }
+
+    public function title(): string
+    {
+        return 'Data'; // Sesuaikan dengan nama sheet di template
+    }
+
+
 }

@@ -25,4 +25,9 @@ class CostCenter extends Model
     {
         return $this->hasMany(AssetRequest::class);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

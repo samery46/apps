@@ -23,8 +23,8 @@ use Filament\Tables\Actions\BulkAction;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\AssetRequestExport;
 use App\Models\AssetRequest;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Database\Eloquent\Builder;
-
 
 
 class ListAssetRequests extends ListRecords
@@ -253,6 +253,18 @@ class ListAssetRequests extends ListRecords
                         $date = date('Y-m-d'); // Mendapatkan tanggal saat ini dalam format YYYY-MM-DD
                         $fileName = "AssetRequest-{$date}.xlsx"; // Menambahkan tanggal pada nama file
                         return Excel::download(new AssetRequestExport($recordIds), $fileName);
+                    }),
+
+                BulkAction::make('export_pdf')
+                    ->label('Export PDF')
+                    ->color('danger')
+                    ->action(function ($records) {
+                        $assetRequests = $records->load(['plant', 'assetGroup', 'costCenter', 'user']);
+                        $pdf = Pdf::loadView('pdf.asset-request-bulk', compact('assetRequests'));
+                        $date = date('Y-m-d');
+                        return response()->streamDownload(function () use ($pdf) {
+                            echo $pdf->stream();
+                        }, "AssetRequests-{$date}.pdf");
                     }),
             ]);
 

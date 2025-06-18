@@ -28,7 +28,7 @@ use Illuminate\Support\Facades\Redirect;
 use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\DateRangePicker;
 use Filament\Forms\Components\DatePicker;
-
+use Maatwebsite\Excel\Excel as ExcelExcel;
 
 class CopackResource extends Resource implements HasShieldPermissions
 {
@@ -434,22 +434,47 @@ class CopackResource extends Resource implements HasShieldPermissions
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
+            // ->bulkActions([
+            //     Tables\Actions\BulkActionGroup::make([
+            //         Tables\Actions\DeleteBulkAction::make(),
+            //     ]),
+            //     BulkAction::make('export')
+            //         ->label('Export')
+            //         ->color('info')
+            //         ->action(function ($records) {
+            //             $recordIds = $records->pluck('id')->toArray();
+            //             $date = date('Y-m-d'); // Mendapatkan tanggal saat ini dalam format YYYY-MM-DD
+            //             $fileName = "stock-copack-{$date}.xlsx"; // Menambahkan tanggal pada nama file
+            //             return Excel::download(new CopackExport($recordIds), $fileName);
+            //         }),
+
+
+            // ]);
+
+
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
+
                 BulkAction::make('export')
                     ->label('Export')
                     ->color('info')
                     ->action(function ($records) {
                         $recordIds = $records->pluck('id')->toArray();
-                        $date = date('Y-m-d'); // Mendapatkan tanggal saat ini dalam format YYYY-MM-DD
-                        $fileName = "stock-copack-{$date}.xlsx"; // Menambahkan tanggal pada nama file
-                        return Excel::download(new CopackExport($recordIds), $fileName);
+                        $date = date('Y-m-d');
+                        $fileName = "stock-copack-{$date}.xlsx";
+
+                        return \Maatwebsite\Excel\Facades\Excel::download(
+                            new \App\Exports\CopackExport($recordIds),
+                            $fileName,
+                            \Maatwebsite\Excel\Excel::XLSX,
+                            [
+                                'template' => storage_path('app/public/templates/template-copack.xlsx'), // ✅ Correct path
+                            ]
+                        );
                     }),
-
-
-            ]);
+                ]);
     }
 
     public static function getRelations(): array
