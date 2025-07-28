@@ -16,6 +16,9 @@ class Kategori extends Model
         'nama',
         'keterangan',
         'kategori_id',
+        'is_barang',
+        'satuan',
+        'stok_minimum',
         'is_aktif'
     ];
 
@@ -23,4 +26,12 @@ class Kategori extends Model
     {
         return $this->belongsTo(Kategori::class);
     }
+
+    public function parent()
+    {
+        return $this->belongsTo(Kategori::class, 'kategori_id');
+    }
+
+    public function viewStock() { return $this->hasOne(ViewStock::class, 'barang_id'); }
+
 }

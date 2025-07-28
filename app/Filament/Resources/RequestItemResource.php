@@ -24,7 +24,7 @@ class RequestItemResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Request IT';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-computer-desktop';
 
     protected static ?string $navigationGroup = 'Transaksi';
 

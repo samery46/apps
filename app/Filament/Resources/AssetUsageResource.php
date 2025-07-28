@@ -32,7 +32,7 @@ class AssetUsageResource extends Resource
 
     protected static ?string $pluralModelLabel = 'pemakaian asset';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-briefcase';
 
     protected static ?string $navigationGroup = 'Transaksi';
 

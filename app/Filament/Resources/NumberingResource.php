@@ -26,7 +26,7 @@ class NumberingResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Penomoran Surat';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-document';
 
     protected static ?string $navigationGroup = 'Transaksi';
 
