@@ -40,23 +40,6 @@ class KategoriResource extends Resource
                 Forms\Components\Section::make('Kategori')
                     ->description('Kategori Detail')
                     ->schema([
-                        // Forms\Components\Select::make('kategori_id')
-                        //     ->label('Parent')
-                        //     ->relationship('kategori', 'nama', function ($query) {
-                        //         $query->whereIn('id', [1, 2]);
-                        //     })
-                        //     ->searchable()
-                        //     ->preload()
-                        //     ->getSearchResultsUsing(function (string $search) {
-                        //         return Kategori::where('nama', 'like', "%{$search}%")
-                        //             ->limit(5)
-                        //             ->pluck('nama', 'id')
-                        //             ->toArray();
-                        //     })
-                        //     ->getOptionLabelUsing(function ($value) {
-                        //         return Kategori::find($value)->nama;
-                        //     }),
-
                         Forms\Components\Select::make('kategori_id')
                             ->label('Kategori')
                             ->relationship(
@@ -98,7 +81,8 @@ class KategoriResource extends Resource
                             ->visible(fn ($state, $get) => $get('is_barang') === true)
                             ->nullable(),
                         Forms\Components\Toggle::make('is_barang')
-                            ->label('Tandai sebagai Barang'),
+                            ->label('Tandai sebagai Barang')
+                            ->default(true),
                         Forms\Components\Toggle::make('is_aktif')
                             ->required()
                             ->hiddenOn('create'),

@@ -103,4 +103,18 @@ class TemplateController extends Controller
 
         return redirect()->back()->with('error', 'File template tidak ditemukan.');
     }
+
+    public function importKategori()
+    {
+        $filePath = 'public/templates/template_import_kategori.xlsx';
+        $fileName = 'template_import_kategori.xlsx';
+
+        if (Storage::exists($filePath)) {
+            return Storage::download($filePath, $fileName);
+        }
+
+        return redirect()->back()->with('error', 'File template tidak ditemukan.');
+    }
+
+
 }

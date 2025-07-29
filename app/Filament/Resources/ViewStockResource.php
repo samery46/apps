@@ -62,6 +62,9 @@ class ViewStockResource extends Resource
                     ->getStateUsing(fn ($record) =>
                         $record->plant?->kode . ' - ' . $record->plant?->nama
                     )
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('barang.kode')
+                    ->label('Kode')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('barang.nama')

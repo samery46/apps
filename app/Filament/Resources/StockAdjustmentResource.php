@@ -104,19 +104,25 @@ class StockAdjustmentResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('plant.kode')
-                    ->label('Kode')
+                    ->label('Plant')
                     ->searchable()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('plant_info')
-                    ->label('Plant')
+                    ->label('Nama Plant')
                     ->getStateUsing(fn ($record) =>
                         $record->plant?->kode . ' - ' . $record->plant?->nama
                     )
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('barang.kode')
+                    ->label('Kode')
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('barang.nama')
-                    ->sortable(),
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('tanggal')
                     ->date()
                     ->sortable(),
@@ -138,7 +144,8 @@ class StockAdjustmentResource extends Resource
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('alasan')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Created By')
                     ->sortable()

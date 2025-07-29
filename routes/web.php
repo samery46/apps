@@ -66,6 +66,11 @@ Route::get(
     [TemplateController::class, 'importNetwork']
 )->name('import-network');
 
+Route::get(
+    '/import-kategori',
+    [TemplateController::class, 'importKategori']
+)->name('import-kategori');
+
 
 Route::get('/', function () {
     return redirect()->route('filament.admin.auth.login');
