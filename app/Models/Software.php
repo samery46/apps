@@ -12,6 +12,7 @@ class Software extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'company_id',
         'plant_id',
         'nama',
         'tgl',
@@ -30,6 +31,11 @@ class Software extends Model
     public function plant(): BelongsTo
     {
         return $this->belongsTo(Plant::class);
+    }
+
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
     }
 
     public function user(): BelongsTo

@@ -30,6 +30,7 @@ class SoftwareImport implements ToModel, WithHeadingRow, WithMultipleSheets, Ski
         $tanggal = $row['tgl'] ? Carbon::parse($row['tgl'])->format('Y-m-d') : null;
 
         return new Software([
+            'company_id' => $row['company_id'],
             'plant_id' => $row['plant_id'],
             'nama' => $row['nama'],
             'tgl' => $tanggal,
@@ -44,6 +45,7 @@ class SoftwareImport implements ToModel, WithHeadingRow, WithMultipleSheets, Ski
     public function rules(): array
     {
         return [
+            '*.company_id' => 'required|exists:companies,id',
             '*.plant_id' => 'required|exists:plants,id',
             '*.karyawan_id' => 'required|exists:karyawans,id',
             '*.user_id' => 'required|exists:users,id',

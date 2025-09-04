@@ -71,6 +71,11 @@ Route::get(
     [TemplateController::class, 'importKategori']
 )->name('import-kategori');
 
+Route::get(
+    '/import-epayment',
+    [TemplateController::class, 'importEpayment']
+)->name('import-epayment');
+
 
 Route::get('/', function () {
     return redirect()->route('filament.admin.auth.login');

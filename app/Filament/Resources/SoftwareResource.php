@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Exports\SoftwareExport;
 use App\Filament\Resources\SoftwareResource\Pages;
 use App\Filament\Resources\SoftwareResource\RelationManagers;
+use App\Models\Company;
 use App\Models\Karyawan;
 use App\Models\Plant;
 use App\Models\Software;
@@ -75,16 +76,41 @@ class SoftwareResource extends Resource
                             ->label('Tanggal'),
                         Forms\Components\TextInput::make('srf')
                             ->label('Nomor SRF')
+                            ->placeholder('Ketikkan nomor SRF')
                             ->maxLength(255),
 
                     ])->columns(3),
                 Forms\Components\Section::make('User')
                     ->description('Info Detail')
                     ->schema([
+                        Forms\Components\Select::make('company_id')
+                            ->label('Company')
+                            ->placeholder('Cari nama Company')
+                            ->searchable()
+                            ->columnSpan(2)
+                            ->preload()
+                            ->getSearchResultsUsing(function (string $search) {
+                                return Company::where(function ($query) use ($search) {
+                                    $query->where('nama', 'like', "%{$search}%")
+                                        ->orWhere('kode', 'like', "%{$search}%");
+                                })
+                                    ->get(['kode', 'nama', 'id'])
+                                    ->mapWithKeys(function ($company) {
+                                        return [$company->id => $company->kode];
+                                    })
+                                    ->toArray();
+                            })
+                            ->getOptionLabelUsing(function ($value) {
+                                $company = Company::find($value);
+                                return $company ? $company->kode : null;
+                            }),
+
+
                         Forms\Components\Select::make('plant_id')
                             ->label('Plant')
                             ->placeholder('Cari kode atau nama Plant')
                             ->searchable()
+                            ->columnSpan(3)
                             ->preload()
                             ->getSearchResultsUsing(function (string $search) {
                                 return Plant::where(function ($query) use ($search) {
@@ -107,6 +133,7 @@ class SoftwareResource extends Resource
                             ->placeholder('Cari NIK atau Nama User')
                             ->searchable()
                             ->preload()
+                            ->columnSpan(3)
                             ->getSearchResultsUsing(function (string $search) {
                                 return Karyawan::where(function ($query) use ($search) {
                                     $query->where('nama', 'like', "%{$search}%")
@@ -123,8 +150,9 @@ class SoftwareResource extends Resource
                                 return $karyawan ? $karyawan->nik . ' ' . $karyawan->nama : null;
                             }),
                         Forms\Components\Textarea::make('keterangan')
-                            ->autosize(),
-                    ])->columns(3),
+                            ->autosize()
+                            ->columnSpan(5),
+                    ])->columns(8),
                 Forms\Components\Toggle::make('is_aktif')
                     ->required(),
                 Forms\Components\Hidden::make('user_id')
@@ -137,6 +165,13 @@ class SoftwareResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('company.kode')
+                    ->label('Company')
+                    ->searchable()
+                    ->sortable()
+                    ->getStateUsing(function ($record) {
+                        return $record->company->kode;
+                    }),
                 Tables\Columns\TextColumn::make('plant.kode')
                     ->label('Plant')
                     ->searchable()
@@ -145,12 +180,14 @@ class SoftwareResource extends Resource
                     }),
                 Tables\Columns\TextColumn::make('nama')
                     ->label('Nama Software')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('tgl')
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('srf')
                     ->label('Nomor SRF')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('karyawan.nik')
                     ->label('NIK')

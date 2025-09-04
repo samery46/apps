@@ -122,6 +122,7 @@ class StockAdjustmentResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('barang.nama')
                     ->sortable()
+                    ->limit(50) // membatasi tampilan maksimal 50 karakter
                     ->searchable(),
                 Tables\Columns\TextColumn::make('tanggal')
                     ->date()
@@ -213,6 +214,7 @@ class StockAdjustmentResource extends Resource
                         }),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([

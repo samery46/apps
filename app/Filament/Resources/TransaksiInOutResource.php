@@ -171,12 +171,13 @@ class TransaksiInOutResource extends Resource
                     ->getStateUsing(fn ($record) =>
                         $record->plant?->kode . ' - ' . $record->plant?->nama
                     )
-                    ->searchable()
+                    // ->searchable()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('barang.nama')
                 ->label('Barang')
                     ->sortable()
+                    ->limit(50) // membatasi tampilan maksimal 60 karakter
                     ->searchable(),
                 Tables\Columns\TextColumn::make('jenis_transaksi')
                     ->label('Jenis')
@@ -293,6 +294,7 @@ class TransaksiInOutResource extends Resource
 
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([

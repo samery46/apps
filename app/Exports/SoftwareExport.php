@@ -39,7 +39,7 @@ class SoftwareExport implements FromCollection, WithMapping, WithHeadings
 
         return [
             $this->rowNumber, // Menambahkan nomor urut
-            $companyId ? $companyId->kode : '',
+            $software->company_id ? $software->company->kode  : '',
             $software->plant_id ? $software->plant->kode . ' - ' . $software->plant->nama  : '',
             $software->nama,
             $software->tgl,

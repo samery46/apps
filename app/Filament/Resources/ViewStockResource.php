@@ -69,6 +69,7 @@ class ViewStockResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('barang.nama')
                     ->label('Barang')
+                    ->limit(60) // membatasi tampilan maksimal 60 karakter
                     ->searchable()
                     ->sortable(),
 

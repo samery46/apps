@@ -6,7 +6,6 @@ use App\Models\User;
 use App\Models\Mutasi;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-
 class MutasiPolicy
 {
     use HandlesAuthorization;

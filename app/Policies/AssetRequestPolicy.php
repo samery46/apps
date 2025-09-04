@@ -23,14 +23,8 @@ class AssetRequestPolicy
      */
     public function view(User $user, AssetRequest $assetRequest): bool
     {
-        return $user->can('view_asset_request');
+        return $user->can('view_asset::request');
     }
-
-    // public function view(User $user, AssetRequest $assetRequest): bool
-    // {
-    //     return $user->can('view_asset::request') && $user->plants->contains($assetRequest->plant_id);
-    // }
-
 
     /**
      * Determine whether the user can create models.
@@ -45,7 +39,7 @@ class AssetRequestPolicy
      */
     public function update(User $user, AssetRequest $assetRequest): bool
     {
-        return $user->can('update_asset::request') && $user->plants->contains($assetRequest->plant_id);
+        return $user->can('update_asset::request');
     }
 
     /**
@@ -53,7 +47,7 @@ class AssetRequestPolicy
      */
     public function delete(User $user, AssetRequest $assetRequest): bool
     {
-        return $user->can('delete_asset::request') && $user->plants->contains($assetRequest->plant_id);
+        return $user->can('delete_asset::request');
     }
 
     /**
@@ -69,7 +63,7 @@ class AssetRequestPolicy
      */
     public function forceDelete(User $user, AssetRequest $assetRequest): bool
     {
-        return $user->can('force_delete_asset::request') && $user->plants->contains($assetRequest->plant_id);
+        return $user->can('force_delete_asset::request');
     }
 
     /**
