@@ -31,7 +31,18 @@ if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php'))
 |
 */
 
+
+
+/*
 require __DIR__.'/../vendor/autoload.php';
+*/
+
+if (file_exists('/var/www/project/vendor/autoload.php')) {
+    require '/var/www/project/vendor/autoload.php';
+} else {
+    require __DIR__.'/../vendor/autoload.php';
+}
+
 
 /*
 |--------------------------------------------------------------------------
@@ -44,7 +55,15 @@ require __DIR__.'/../vendor/autoload.php';
 |
 */
 
+/*
 $app = require_once __DIR__.'/../bootstrap/app.php';
+*/
+
+if (file_exists('/var/www/project/bootstrap/app.php')) {
+    $app = require '/var/www/project/bootstrap/app.php';
+} else {
+    $app = require __DIR__.'/../bootstrap/app.php';
+}
 
 $kernel = $app->make(Kernel::class);
 

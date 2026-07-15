@@ -1,0 +1,35 @@
+services:
+  web:
+    image: chialab/php-dev:8.3-apache
+    restart: always
+    ports:
+      - "1100:80"
+    volumes:
+      # Sisi kiri (Ubuntu Anda) langsung memetakan folder public ke folder utama Apache Docker (sisi kanan)
+      - ./public:/var/www/html
+      # Kita petakan juga folder project utuh ke /var/www/project agar Laravel tetap bisa membaca folder vendor & storage
+      - .:/var/www/project
+    depends_on:
+      - db
+    environment:
+    #  - APACHE_DOCUMENT_ROOT=/var/www/html/public
+      - DB_HOST=db
+      - DB_USERNAME=sail
+      - DB_PASSWORD=password
+      - DB_DATABASE=laravel
+
+  db:
+    image: mysql:8.0
+    restart: always
+    ports:
+      - "3307:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_USER=sail
+      - MYSQL_PASSWORD=password
+      - MYSQL_DATABASE=laravel
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
