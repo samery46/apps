@@ -22,6 +22,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Actions\BulkAction;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class AssetResource extends Resource implements HasShieldPermissions
 {
@@ -339,6 +340,27 @@ class AssetResource extends Resource implements HasShieldPermissions
                         $fileName = "asset-{$date}.xlsx"; // Menambahkan tanggal pada nama file
                         return Excel::download(new AssetExport($recordIds), $fileName);
                     }),
+                BulkAction::make('export_pdf')
+                    ->label('Export PDF')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('danger')
+                    ->action(function ($records) {
+                            // Eager load relasi pendukung agar query efisien
+                        $assets = $records->load(['plant.company', 'karyawan', 'user']);
+
+                            // Load Blade view dan set kertas A4 Portrait
+                            $pdf = Pdf::loadView('pdf.asset-cards', compact('assets'))
+                                ->setPaper('a4', 'portrait');
+
+                            $fileName = 'Export-Assets-' . now()->format('Y-m-d_His') . '.pdf';
+
+                            // Streaming/download file PDF
+                            return response()->streamDownload(function () use ($pdf) {
+                                echo $pdf->stream();
+                            }, $fileName);
+                    }),            
+
+
             ]);
     }
 
