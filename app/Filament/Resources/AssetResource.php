@@ -22,7 +22,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Actions\BulkAction;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Auth;
-use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class AssetResource extends Resource implements HasShieldPermissions
 {
@@ -311,6 +311,16 @@ class AssetResource extends Resource implements HasShieldPermissions
                     ->relationship('plant', 'kode')
                     ->label('Filter by Plant')
                     ->options(Plant::all()->pluck('kode', 'id')->toArray()),
+
+                SelectFilter::make('tipe')
+                    ->label('Filter by Tipe')
+                    ->options(
+                        Asset::query()
+                            ->whereNotNull('tipe')
+                            ->distinct()
+                            ->pluck('tipe', 'tipe')
+                            ->toArray()
+                    ),
 
                 TernaryFilter::make('is_aktif')
                     ->label('Filter by Aktif')
