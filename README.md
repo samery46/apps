@@ -7,60 +7,101 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## About Laravel
+# Enterprise Asset & Operations Management System
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Sistem Informasi Manajemen Aset, Inventaris IT, Logistik Stok, dan Operasional berbasis multi-plant terpadu yang terintegrasi.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 🛠️ Tech Stack & Requirements
 
-## Learning Laravel
+| Komponen | Spesifikasi |
+| :--- | :--- |
+| **Backend Framework** | Laravel 10.x |
+| **Admin Panel Engine** | Filament PHP v3.x |
+| **Bahasa Pemrograman**| PHP 8.1+ (Rekomendasi PHP 8.2 / 8.5) |
+| **Database Engine**    | MySQL 8.0+ / MariaDB 10.4+ |
+| **Pustaka Utama**      | `barryvdh/laravel-dompdf` (Cetak PDF), `maatwebsite/excel` (Export Excel), `bezhansalleh/filament-shield` (RBAC) |
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+---
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## 📦 Struktur Modul & Fungsi
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 1. Modul Manajemen Aset (`Asset Management`)
+* **Master Asset (`AssetResource`):** Database nomor aset, Net Book Value (NBV), rekonsiliasi Qty vs Aktual Fisik, cetak kartu aset (PDF 4-card A4), dan export Excel.
+* **Asset Number Request (`AssetRequestResource`):** Pengajuan nomor aset baru dengan multi-tier approval per plant.
+* **Klaim Asuransi Aset (`ClaimResource`):** Pelaporan aset rusak/hilang, estimasi kerugian, upload lampiran bukti, approval otomatis via `ClaimObserver`, serta cetak Berita Acara PDF fisik.
+* **Approval Setting & Workflow Config:** Konfigurasi hierarki persetujuan (*approver*) per Plant.
 
-## Laravel Sponsors
+### 2. Modul Operasional (`Transaksi`)
+* **Peminjaman Perangkat (`PinjamResource`):** Peminjaman hardware  karyawan dilengkapi notifikasi email otomatis saat peminjaman dan pengembalian.
+* **Request IT (`RequestItemResource`) & Service Request (`ServiceRequestResource`):** Tiket permohonan komponen baru dan pemeliharaan perbaikan perangkat.
+* **Mutasi Bank :** Pencatatan mutasi kas plant dan pelacakan status pembayaran faktur vendor.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+### 3. Modul Logistik & Gudang (`Stock`)
+* **Transaksi In/Out & View Stock:** Arus barang masuk/keluar dan monitoring stok riil per lokasi plant.
+* **Stock Adjustment:** Penyesuaian selisih hasil stock opname fisik gudang.
+* **Stock Copack:** Alur material dan pencatatan stok pihak rekanan maklon (*copacker*).
 
-### Premium Partners
+### 4. Data Master (`Master`)
+* Hierarki: **Company** $\rightarrow$ **Plant** $\rightarrow$ **Departemen** $\rightarrow$ **Cost Center** $\rightarrow$ **Karyawan**.
+* Master Teknis: **Perangkat**, **Software** (lisensi), **Network**, dan **UID SAP**.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+---
 
-## Contributing
+## 🚀 Panduan Instalasi Lokal (Developer Setup)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+1. **Clone repository & masuk ke direktori:**
+   ```bash
+   git clone <repo-url>
+   cd apps
+   ```
 
-## Code of Conduct
+2. **Pasang dependensi Composer & NPM:**
+   ```bash
+   composer install
+   npm install && npm run build
+   ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+3. **Konfigurasi Environment:**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+   *Sesuaikan konfigurasi database (`DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`) pada file `.env`.*
 
-## Security Vulnerabilities
+4. **Jalankan Migrasi Database & Seeder:**
+   ```bash
+   php artisan migrate --seed
+   ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+5. **Hubungkan Symlink Storage (PENTING untuk berkas lampiran):**
+   ```bash
+   php artisan storage:link
+   ```
 
-## License
+6. **Jalankan Server Lokal:**
+   ```bash
+   php artisan serve
+   ```
+   Akses panel admin di: `http://localhost:8000/admin`
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+## 🔒 Konvensi & Keamanan Alur Bisnis
+
+* **Data Immutability (Integritas Data):** Transaksi klaim yang sudah memiliki persetujuan approval tidak dapat diubah atau dihapus guna mencegah manipulasi audit.
+* **Lampiran Bukti:** Lampiran yang sudah tersimpan di database tidak dapat dihapus, namun lampiran susulan tetap dapat ditambahkan melalui tombol *Tambah Berkas*.
+* **Plant-Scoped Access:** Setiap pengguna hanya berhak mengakses dan menyetujui transaksi dari Plant yang terdaftar pada profil aksesnya.
+
+---
+
+## 📜 Riwayat Versi & Rilis
+
+Seluruh riwayat perkembangan modul, fitur baru, dan perbaikan sistem dari awal inisiasi proyek (2024) hingga rilis saat ini dapat dilihat pada berkas [**CHANGELOG.md**](CHANGELOG.md).
+
+---
+
+## 📜 Riwayat Versi & Rilis
+
+Seluruh riwayat perkembangan modul, fitur baru, dan perbaikan sistem dari awal inisiasi proyek (2024) hingga rilis saat ini dapat dilihat pada berkas [**CHANGELOG.md**](CHANGELOG.md).
