@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Claim; // <-- Import Model Claim
+use App\Observers\ClaimObserver; // <-- Import Observer Claim
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -25,7 +27,8 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Daftarkan Observer di sini
+        Claim::observe(ClaimObserver::class);
     }
 
     /**

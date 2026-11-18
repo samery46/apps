@@ -14,6 +14,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -106,5 +107,24 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
     public function plants(): BelongsToMany
     {
         return $this->belongsToMany(Plant::class, 'plant_user', 'user_id', 'plant_id');
+    }
+
+    // =========================================================================
+    // RELASI UNTUK MODUL KLAIM ASET
+    // =========================================================================
+
+    public function createdClaims(): HasMany
+    {
+        return $this->hasMany(Claim::class, 'created_by_user_id');
+    }
+
+    public function workflowConfigs(): HasMany
+    {
+        return $this->hasMany(WorkflowConfig::class);
+    }
+
+    public function claimApprovals(): HasMany
+    {
+        return $this->hasMany(ClaimApproval::class);
     }
 }
