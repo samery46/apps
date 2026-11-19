@@ -96,12 +96,22 @@ Sistem Informasi Manajemen Aset, Inventaris IT, Logistik Stok, dan Operasional b
 
 ---
 
-## 📜 Riwayat Versi & Rilis
+## 📚 Dokumentasi Teknis Mendalam (Module Specs)
 
-Seluruh riwayat perkembangan modul, fitur baru, dan perbaikan sistem dari awal inisiasi proyek (2024) hingga rilis saat ini dapat dilihat pada berkas [**CHANGELOG.md**](CHANGELOG.md).
+Dokumentasi teknis mendalam per modul (skema basis data, implementasi model Eloquent, relasi ERD, konfigurasi Filament Resource, dan panduan troubleshooting) yang disusun secara runut berdasarkan versi kemunculannya dapat diakses di direktori [**docs/**](docs/README.md):
+
+* 🏢 [**Modul 01: Multi-Company, Plant & User Access Control (RBAC)**](docs/modules/01-organization-access-control.md) — *Hadir sejak `v0.1.0`*
+* 💻 [**Modul 02: Inventaris Perangkat IT & Sirkulasi Peminjaman**](docs/modules/02-it-hardware-and-loans.md) — *Hadir sejak `v0.1.0`*
+* 🏷️ [**Modul 03: Master Aset Tetap SAP & Infrastruktur IT**](docs/modules/03-asset-master-infrastructure.md) — *Hadir sejak `v0.1.0`*
+* 🔧 [**Modul 04: Finansial SAP, Service Request & Pengadaan IT**](docs/modules/04-financial-sap-service-ticket.md) — *Hadir sejak `v0.2.0`*
+* 💰 [**Modul 05: Rekonsiliasi Kas Bank Plant & Manufaktur Maklon (Copack)**](docs/modules/05-bank-treasury-copack.md) — *Hadir sejak `v0.3.0`*
+* 📑 [**Modul 06: Pengadaan Nomor Aset & Approval Engine v1**](docs/modules/06-asset-request-approval-v1.md) — *Hadir sejak `v0.4.0`*
+* 📦 [**Modul 07: Manajemen Stok Gudang IT & E-Payment Voucher**](docs/modules/07-warehouse-inventory-epayment.md) — *Hadir sejak `v0.5.0`*
+* 🏷️ [**Modul 08: Pelabelan Fisik Aset (Kartu Aset 4-Up) & Notifikasi Operasional**](docs/modules/08-asset-label-cards-notification.md) — *Hadir sejak `v0.6.0`*
+* 🛡️ [**Modul 09: Klaim Insiden Aset & Data Governance**](docs/modules/09-asset-claims-workflow.md) — *Hadir sejak `v1.0.0`*
 
 ---
 
-## 📜 Riwayat Versi & Rilis
+## 📜 Riwayat Versi & Rilis (Changelog)
 
-Seluruh riwayat perkembangan modul, fitur baru, dan perbaikan sistem dari awal inisiasi proyek (2024) hingga rilis saat ini dapat dilihat pada berkas [**CHANGELOG.md**](CHANGELOG.md).
+Seluruh riwayat perkembangan modul, fitur baru, dan perbaikan sistem dari awal inisiasi proyek (2024) hingga rilis baseline produksi saat ini dapat dilihat pada berkas [**CHANGELOG.md**](CHANGELOG.md).
