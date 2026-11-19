@@ -3,7 +3,7 @@
 > **Status Modul:** `Production / Stable`  
 > **Diperkenalkan Sejak:** `v0.1.0` (18 Juli 2024)  
 > **Pembaruan Terakhir:** `v0.5.0` (27 Agustus 2025)  
-> **Ruang Lingkup:** Master Organisasi, HR Data Induk, Autentikasi & Otorisasi
+> **Ruang Lingkup:** Master Organisasi, Data Karyawan, Autentikasi & Otorisasi
 
 ---
 
@@ -14,7 +14,7 @@
   - Integrasi otentikasi pengguna (`users`) dengan `spatie/laravel-permission` melalui plugin `bezhan-salleh/filament-shield`.
   - Pembuatan tabel pivot `plant_user` untuk memetakan penugasan user ke satu atau lebih pabrik (multi-plant authorization).
 - **v0.5.0 (2025-08-27):**
-  - Penguatan isolasi data operasional: standarisasi kolom `plant_id` pada transaksi anak (Stok, Mutasi, dan Tiket) agar mengacu secara ketat ke tabel `plants`.
+  - Penguatan isolasi data operasional: standarisasi kolom `plant_id` pada transaksi (Stok, Mutasi, dan Tiket) agar mengacu secara ketat ke tabel `plants`.
 
 ---
 
@@ -23,8 +23,8 @@
 Sistem dirancang untuk mendukung operasional perusahaan manufaktur dengan struktur multi-entitas (*holding/subsidiaries*) dan banyak lokasi pabrik (*multi-plant*). Modul ini berfungsi sebagai penyedia data identitas sentral bagi seluruh modul transaksi:
 
 1. **Hierarki Entitas Bisnis:** Menghubungkan PT (Company) ke beberapa pabrik atau kantor perwakilan (Plant), lalu ke divisi fungsional (Departemen).
-2. **Master Pegawai (Karyawan):** Menyimpan profil karyawan lengkap (NIK, nama, departemen, plant, jabatan, email, User AD, dan UID SAP) yang akan bertindak sebagai peminjam perangkat, pelapor tiket servis, pengaju nomor aset, atau pembuat klaim.
-3. **Role-Based Access Control (RBAC):** Menjamin bahwa setiap pengguna (User) hanya memiliki hak akses baca/tulis (*view, create, update, delete, restore*) sesuai peran mereka di unit kerja terkait.
+2. **Master Karyawan :** Menyimpan profil karyawan lengkap (NIK, nama, departemen, plant, jabatan, email, User AD, dan UID SAP) yang akan bertindak sebagai peminjam perangkat, pelapor tiket servis, pengaju nomor aset, atau pembuat klaim.
+3. **Role-Based Access Control (RBAC):** Menjamin bahwa setiap pengguna (User) hanya memiliki hak akses baca/tulis (*view, create, update, delete, restore*) sesuai peran mereka di plant terkait.
 
 ---
 
@@ -53,8 +53,8 @@ erDiagram
     PLANTS {
         bigint id PK
         bigint company_id FK
-        string kode "Plant Code (e.g. 1101)"
-        string nama "Plant Site Name"
+        string kode "Plant Code (e.g. 101)"
+        string nama "Plant Name"
         string kota
         boolean is_aktif
     }
@@ -90,9 +90,9 @@ erDiagram
 
 ### Tabel & Indeks Kunci:
 1. **`companies`**: Induk legalitas. Dilengkapi soft deletes (`deleted_at`).
-2. **`plants`**: Unit pabrik/cabang fisik. Berelasi ke `companies` (`company_id` foreign key).
+2. **`plants`**: Unit cabang. Berelasi ke `companies` (`company_id` foreign key).
 3. **`departemens`**: Satuan divisi kerja.
-4. **`karyawans`**: Profil karyawan operasional. Memiliki indeks NIK unik dan relasi wajib ke `plant_id` dan `departemen_id`.
+4. **`karyawans`**: Profil karyawan, memiliki indeks NIK unik dan relasi wajib ke `plant_id` dan `departemen_id`.
 5. **`plant_user`**: Tabel perantara many-to-many (`user_id`, `plant_id`) untuk mengontrol hak akses operasional multi-cabang.
 6. **`roles` & `permissions`**: Standar Spatie Permission yang diatur melalui antarmuka Filament Shield.
 
@@ -136,7 +136,7 @@ public function departemen(): BelongsTo
 | Resource Class | Navigasi Panel | Fitur Utama |
 | :--- | :--- | :--- |
 | [`CompanyResource.php`](file:///home/netcom/apps/app/Filament/Resources/CompanyResource.php) | *Plants Cluster* | CRUD Legal Entity, status aktif/non-aktif, kode unik perusahaan |
-| [`PlantResource.php`](file:///home/netcom/apps/app/Filament/Resources/PlantResource.php) | *Plants Cluster* | Manajemen lokasi fisik pabrik, pemetaan ke Company, ekspor data plant |
+| [`PlantResource.php`](file:///home/netcom/apps/app/Filament/Resources/PlantResource.php) | *Plants Cluster* | Manajemen lokasi pabrik, pemetaan ke Company, ekspor data plant |
 | [`DepartemenResource.php`](file:///home/netcom/apps/app/Filament/Resources/DepartemenResource.php) | *Master Group* | Master divisi operasional, relasi sub-departemen hirarkis |
 | [`KaryawanResource.php`](file:///home/netcom/apps/app/Filament/Resources/KaryawanResource.php) | *Master Group* | Pencatatan NIK, foto profil, mapping UID SAP / Active Directory, ekspor Excel (`KaryawanExport`) |
 | [`UserResource.php`](file:///home/netcom/apps/app/Filament/Resources/UserResource.php) | *Setting Group* | Manajemen akun login, aktivasi user, penugasan multi-plant, dan assign Role Shield |

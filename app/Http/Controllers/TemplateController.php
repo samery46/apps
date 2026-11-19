@@ -116,18 +116,4 @@ class TemplateController extends Controller
         return redirect()->back()->with('error', 'File template tidak ditemukan.');
     }
 
-
-    public function importEpayment()
-    {
-        $filePath = 'public/templates/template_import_epayment.xlsx';
-        $fileName = 'template_import_epayment.xlsx';
-
-        if (Storage::exists($filePath)) {
-            return Storage::download($filePath, $fileName);
-        }
-
-        return redirect()->back()->with('error', 'File template tidak ditemukan.');
-    }
-
-
 }

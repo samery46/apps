@@ -10,7 +10,8 @@ Format penulisan mengacu pada [Keep a Changelog](https://keepachangelog.com/id/1
 
 | Versi | Tanggal Rilis | Sorotan Utama (*Key Highlights*) | Status |
 | :---: | :---: | :--- | :---: |
-| **[v1.0.0]** | **2026-11-18** | **Baseline Produksi:** Modul Klaim Insiden Aset, Live Approval Preview, Arsip PDF & Excel | `Current` |
+| **[v1.1.0]** | **2026-11-19** | **Penyederhanaan Sistem:** Penghapusan Modul E-Payment | `Current` |
+| **[v1.0.0]** | **2026-11-18** | **Baseline Produksi:** Modul Klaim Insiden Aset, Live Approval Preview, Arsip PDF & Excel | `Stable` |
 | **[v0.6.0]** | **2026-08-20** | Cetak Kartu Aset A4 PDF (4-Card), Filter Tipe Aset, Notifikasi Email Pinjam | `Stable` |
 | **[v0.5.0]** | **2025-08-27** | Modul Gudang / Stock (In/Out, Opname, View Stock) | `Stable` |
 | **[v0.4.0]** | **2025-06-18** | Modul Asset Request & Approval Engine Berjenjang (`ApprovalSetting`), DomPDF | `Stable` |
@@ -19,6 +20,16 @@ Format penulisan mengacu pada [Keep a Changelog](https://keepachangelog.com/id/1
 | **[v0.1.0]** | **2024-07-18** | Inisiasi Fondasi: Master Organisasi, Hardware IT, Modul Pinjam & Filament Shield | `Initial` |
 
 ---
+
+## [1.1.0] - 2026-11-19
+> **Milestone:** *Module Streamlining & Feature Retirement*
+
+### 🗑️ Removed
+- **Penghapusan Modul E-Payment Voucher (`EpaymentResource`):**
+  - Menghapus resource panel Filament `EpaymentResource` beserta seluruh *pages* pendukungnya (`ListEpayments`, `CreateEpayment`, `EditEpayment`).
+  - Menghapus rute `/import-epayment` dan fungsi pengunduhan template pada `TemplateController`.
+  - Menghapus class import Excel `EpaymentImport` dan policy otorisasi `EpaymentPolicy`.
+  - Membersihkan hak akses (*permissions*) terkait `*_epayment` dari tabel Filament Shield.
 
 ## [1.0.0] - 2026-11-18
 > **Milestone:** *First Full Production Release (Enterprise Asset Claims & Data Integrity Protection)*
