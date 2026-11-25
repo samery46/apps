@@ -95,7 +95,7 @@ class ClaimPolicy
      */
     public function replicate(User $user, Claim $claim): bool
     {
-        return $user->can('replicate_claim');
+        return $user->can('{{ Replicate }}');
     }
 
     /**
@@ -103,6 +103,6 @@ class ClaimPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_claim');
+        return $user->can('{{ Reorder }}');
     }
 }

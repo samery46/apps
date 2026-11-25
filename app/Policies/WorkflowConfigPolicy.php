@@ -95,7 +95,7 @@ class WorkflowConfigPolicy
      */
     public function replicate(User $user, WorkflowConfig $workflowConfig): bool
     {
-        return $user->can('replicate_workflow::config');
+        return $user->can('{{ Replicate }}');
     }
 
     /**
@@ -103,6 +103,6 @@ class WorkflowConfigPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_workflow::config');
+        return $user->can('{{ Reorder }}');
     }
 }

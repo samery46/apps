@@ -10,7 +10,8 @@ Format penulisan mengacu pada [Keep a Changelog](https://keepachangelog.com/id/1
 
 | Versi | Tanggal Rilis | Sorotan Utama (*Key Highlights*) | Status |
 | :---: | :---: | :--- | :---: |
-| **[v1.1.0]** | **2026-11-19** | **Penyederhanaan Sistem:** Penghapusan Modul E-Payment | `Current` |
+| **[v1.2.0]** | **2026-11-25** | **Email-Based Quick Approval & Shield RBAC untuk Klaim Aset** | `Current` |
+| **[v1.1.0]** | **2026-11-19** | **Penyederhanaan Sistem:** Penghapusan Modul E-Payment | `Stable` |
 | **[v1.0.0]** | **2026-11-18** | **Baseline Produksi:** Modul Klaim Insiden Aset, Live Approval Preview, Arsip PDF & Excel | `Stable` |
 | **[v0.6.0]** | **2026-08-20** | Cetak Kartu Aset A4 PDF (4-Card), Filter Tipe Aset, Notifikasi Email Pinjam | `Stable` |
 | **[v0.5.0]** | **2025-08-27** | Modul Gudang / Stock (In/Out, Opname, View Stock) | `Stable` |
@@ -20,6 +21,27 @@ Format penulisan mengacu pada [Keep a Changelog](https://keepachangelog.com/id/1
 | **[v0.1.0]** | **2024-07-18** | Inisiasi Fondasi: Master Organisasi, Hardware IT, Modul Pinjam & Filament Shield | `Initial` |
 
 ---
+
+## [1.2.0] - 2026-11-25
+> **Milestone:** *Email-Based Quick Approval & Shield RBAC Integration for Asset Claims*
+### 🚀 Added
+- **Persetujuan Klaim via Tautan Email (*Email-Based Quick Approval via Signed URLs*):**
+  - Implementasi class service `ClaimNotificationService` untuk mengotomasi rantai pengiriman email berantai (*sequential notification chaining*) dari approver tahap pertama hingga tahap akhir.
+  - Fitur *One-Click Approval / Rejection* menggunakan Laravel Temporary Signed URLs (`URL::temporarySignedRoute`) dengan enkripsi kriptografis HMAC-SHA256 yang aman dan memiliki masa kedaluwarsa (7 hari).
+  - Dua Mailable class baru: `ClaimApprovalRequestMail` (permintaan persetujuan pimpinan) dan `ClaimStatusNotificationMail` (notifikasi keputusan akhir ke pembuat klaim).
+  - Template email HTML responsif korporat (`claim_approval_request.blade.php` dan `claim_status_notification.blade.php`) lengkap dengan rincian insiden, estimasi kerugian, dan tombol aksi *Setujui Klaim* (hijau) serta *Tolak Klaim* (merah).
+  - Controller terdedikasi `ClaimApprovalController` yang dilengkapi middleware `signed`, proteksi klik ganda (*idempotency guard*), dan validasi urutan hierarki persetujuan (*sequential hierarchy guard*).
+  - Halaman respon web interaktif: `approval_result.blade.php` (umpan balik status sukses/kedaluwarsa) dan formulir catatan alasan penolakan `approval_reject_form.blade.php`.
+- **Integrasi Role-Based Access Control (RBAC) Filament Shield:**
+  - Pemasangan kontrak `HasShieldPermissions` dan method `getPermissionPrefixes()` pada `ClaimResource` dan `WorkflowConfigResource`.
+  - Pendaftaran pemetaan model ke policy pada `AuthServiceProvider` (`ClaimPolicy` & `WorkflowConfigPolicy`).
+  - Pembuatan hak akses granular (`view_any_claim`, `create_claim`, `update_claim`, `delete_claim`, `view_any_workflow::config`, dsb.) yang dapat dikelola secara visual melalui menu *Shield / Roles*.
+### 🔄 Changed
+- **Sinkronisasi Trigger Approval Dua Arah:**
+  - Integrasi pada `ClaimObserver::created` untuk otomatis mengirim email ke Approver Step 1 saat tiket baru dibuat.
+  - Integrasi pada action tabel `ClaimResource` (Approve & Reject di panel web) agar persetujuan manual via dashboard tetap memicu pengiriman email otomatis ke tahap approver berikutnya.
+- **Penyempurnaan Berita Acara PDF:**
+  - Penyesuaian layout dan stempel persetujuan digital pada dokumen cetak PDF [`claim-document.blade.php`](file:///home/netcom/apps/resources/views/pdf/claim-document.blade.php).
 
 ## [1.1.0] - 2026-11-19
 > **Milestone:** *Module Streamlining & Feature Retirement*

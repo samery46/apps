@@ -5,6 +5,7 @@ namespace App\Observers;
 use App\Models\Claim;
 use App\Models\WorkflowConfig;
 use App\Models\ClaimApproval;
+use App\Services\ClaimNotificationService;
 
 class ClaimObserver
 {
@@ -27,6 +28,9 @@ class ClaimObserver
                 'status'     => 'pending',
             ]);
         }
+
+        // Otomatis kirim email permintaan persetujuan ke approver tahap pertama (Step 1)
+        ClaimNotificationService::sendNextApprovalOrCompletionNotification($claim);
     }
 
     /**

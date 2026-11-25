@@ -242,7 +242,7 @@
         </table>
 
         <!-- JUDUL DOKUMEN -->
-        <div class="doc-title">KLAIM ASET</div>
+        <div class="doc-title">KLAIM ASURANSI ASET</div>
         <div class="doc-subtitle">Nomor Dokumen : <strong>{{ $claim->ticket_number }}</strong></div>
 
         <!-- META DATA TRANSAKSI -->

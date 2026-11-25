@@ -14,8 +14,9 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 
-class WorkflowConfigResource extends Resource
+class WorkflowConfigResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = WorkflowConfig::class;
 
@@ -135,6 +136,22 @@ class WorkflowConfigResource extends Resource
             'index' => Pages\ListWorkflowConfigs::route('/'),
             'create' => Pages\CreateWorkflowConfig::route('/create'),
             'edit' => Pages\EditWorkflowConfig::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'restore',
+            'restore_any',
+            'delete',
+            'delete_any',
+            'force_delete',
+            'force_delete_any',
         ];
     }
 }

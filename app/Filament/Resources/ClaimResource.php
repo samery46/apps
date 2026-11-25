@@ -25,8 +25,10 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\HtmlString;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Services\ClaimNotificationService;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 
-class ClaimResource extends Resource
+class ClaimResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Claim::class;
 
@@ -523,6 +525,9 @@ class ClaimResource extends Resource
                         try {
                             $record->approve($record->currentStepOrder(), auth()->id(), $data['catatan'] ?? null);
 
+                            // Memicu email notifikasi ke step berikutnya atau pemberitahuan selesai ke pembuat tiket
+                            ClaimNotificationService::sendNextApprovalOrCompletionNotification($record);
+
                             Notification::make()
                                 ->title('Klaim Berhasil Di-approve')
                                 ->success()
@@ -558,7 +563,18 @@ class ClaimResource extends Resource
                     ])
                     ->action(function ($record, array $data) {
                         try {
-                            $record->reject($record->currentStepOrder(), auth()->id(), $data['catatan']);
+                            $stepOrder = $record->currentStepOrder();
+                            $record->reject($stepOrder, auth()->id(), $data['catatan']);
+
+                            // Ambil approval record yang baru ditolak untuk notifikasi email
+                            $rejectedApproval = $record->approvals()
+                                ->where('step_order', $stepOrder)
+                                ->where('user_id', auth()->id())
+                                ->first();
+
+                            if ($rejectedApproval) {
+                                ClaimNotificationService::sendRejectionNotification($record, $rejectedApproval);
+                            }
 
                             Notification::make()
                                 ->title('Klaim Berhasil Ditolak')
@@ -672,6 +688,22 @@ class ClaimResource extends Resource
             'index' => Pages\ListClaims::route('/'),
             'create' => Pages\CreateClaim::route('/create'),
             'edit' => Pages\EditClaim::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'restore',
+            'restore_any',
+            'delete',
+            'delete_any',
+            'force_delete',
+            'force_delete_any',
         ];
     }
 }

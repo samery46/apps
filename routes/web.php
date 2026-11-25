@@ -77,3 +77,15 @@ Route::get('/', function () {
 
 Route::get('/asset-requests/{id}/export-pdf', [AssetRequestExportController::class, 'export'])->name('asset-requests.export-pdf');
 
+// Approval Klaim Aset via Email (Signed URLs)
+use App\Http\Controllers\ClaimApprovalController;
+
+Route::get('/claims/approval/{claim}/{approval}/{action}', [ClaimApprovalController::class, 'handle'])
+    ->name('claim.approval.action')
+    ->middleware('signed');
+
+Route::post('/claims/approval/{claim}/{approval}/reject', [ClaimApprovalController::class, 'submitReject'])
+    ->name('claim.approval.reject.submit')
+    ->middleware('signed');
+
+
