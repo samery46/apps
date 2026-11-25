@@ -27,7 +27,7 @@ Format penulisan mengacu pada [Keep a Changelog](https://keepachangelog.com/id/1
 ### 🚀 Added
 - **Persetujuan Klaim via Tautan Email (*Email-Based Quick Approval via Signed URLs*):**
   - Implementasi class service `ClaimNotificationService` untuk mengotomasi rantai pengiriman email berantai (*sequential notification chaining*) dari approver tahap pertama hingga tahap akhir.
-  - Fitur *One-Click Approval / Rejection* menggunakan Laravel Temporary Signed URLs (`URL::temporarySignedRoute`) dengan enkripsi kriptografis HMAC-SHA256 yang aman dan memiliki masa kedaluwarsa (7 hari).
+  - Fitur *One-Click Approval / Rejection* menggunakan Laravel Temporary Signed URLs (`URL::temporarySignedRoute`) dengan enkripsi kriptografis HMAC-SHA256 yang aman dan memiliki masa kedaluwarsa (30 hari).
   - Dua Mailable class baru: `ClaimApprovalRequestMail` (permintaan persetujuan pimpinan) dan `ClaimStatusNotificationMail` (notifikasi keputusan akhir ke pembuat klaim).
   - Template email HTML responsif korporat (`claim_approval_request.blade.php` dan `claim_status_notification.blade.php`) lengkap dengan rincian insiden, estimasi kerugian, dan tombol aksi *Setujui Klaim* (hijau) serta *Tolak Klaim* (merah).
   - Controller terdedikasi `ClaimApprovalController` yang dilengkapi middleware `signed`, proteksi klik ganda (*idempotency guard*), dan validasi urutan hierarki persetujuan (*sequential hierarchy guard*).
@@ -41,7 +41,7 @@ Format penulisan mengacu pada [Keep a Changelog](https://keepachangelog.com/id/1
   - Integrasi pada `ClaimObserver::created` untuk otomatis mengirim email ke Approver Step 1 saat tiket baru dibuat.
   - Integrasi pada action tabel `ClaimResource` (Approve & Reject di panel web) agar persetujuan manual via dashboard tetap memicu pengiriman email otomatis ke tahap approver berikutnya.
 - **Penyempurnaan Berita Acara PDF:**
-  - Penyesuaian layout dan stempel persetujuan digital pada dokumen cetak PDF [`claim-document.blade.php`](file:///home/netcom/apps/resources/views/pdf/claim-document.blade.php).
+  - Penyesuaian layout dan stempel persetujuan digital pada dokumen cetak PDF [`claim-document.blade.php`].
 
 ## [1.1.0] - 2026-11-19
 > **Milestone:** *Module Streamlining & Feature Retirement*

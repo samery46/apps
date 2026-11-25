@@ -33,6 +33,7 @@ class ViewStockResource extends Resource
     public static function getTableQuery(): Builder
     {
         return ViewStock::query()->select([
+            'id',
             'barang_id',
             'plant_id',
             'total_masuk',
@@ -125,20 +126,29 @@ class ViewStockResource extends Resource
             ->actions([
                 // Tables\Actions\EditAction::make(),
             ])
+            ->headerActions([
+                Tables\Actions\Action::make('export_all')
+                    ->label('Export Excel (Semua)')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->color('success')
+                    ->action(function () {
+                        $date = date('Y-m-d_His');
+                        $fileName = "ViewStock-Semua-{$date}.xlsx";
+                        return Excel::download(new ViewStockExport(), $fileName);
+                    }),
+            ])
             ->bulkActions([
-    BulkAction::make('export')
-        ->label('Export')
-        ->color('info')
-        ->action(function ($records) {
-            $recordPairs = $records->map(fn ($record) => [
-                'barang_id' => $record->barang_id,
-                'plant_id' => $record->plant_id,
-            ])->toArray();
-            $date = date('Y-m-d');
-            $fileName = "ViewStock-{$date}.xlsx";
-            return Excel::download(new ViewStockExport($recordPairs), $fileName);
-        }),
-    ]);
+                BulkAction::make('export_selected')
+                    ->label('Export Excel (Terpilih)')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('success')
+                    ->action(function ($records) {
+                        $recordIds = $records->pluck('id')->toArray();
+                        $date = date('Y-m-d_His');
+                        $fileName = "ViewStock-Terpilih-{$date}.xlsx";
+                        return Excel::download(new ViewStockExport($recordIds), $fileName);
+                    }),
+            ]);
     }
 
     // ⛔ Nonaktifkan aksi edit, buat, hapus

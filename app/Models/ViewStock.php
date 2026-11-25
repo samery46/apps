@@ -11,28 +11,14 @@ class ViewStock extends Model
 
     protected $table = 'view_stocks';
     public $timestamps = false;
-    // protected $primaryKey = 'id'; // alias barang_id AS id di view
-    protected $primaryKey = null;
-
+    protected $primaryKey = 'id';
     public $incrementing = false;
-    protected $keyType = 'int';
-
-    // public function barang()
-    // {
-    //     return $this->belongsTo(Kategori::class, 'id');
-    // }
-
-    // public function getKey(): mixed
-    // {
-    //     return $this->barang_id . '-' . $this->plant_id;
-    // }
+    protected $keyType = 'string';
 
     public function getRouteKey()
     {
-        return $this->barang_id . '-' . $this->plant_id;
+        return $this->id;
     }
-
-
 
     public function barang()
     {
@@ -40,14 +26,12 @@ class ViewStock extends Model
     }
 
     public function plant()
-{
-    return $this->belongsTo(Plant::class, 'plant_id');
-}
+    {
+        return $this->belongsTo(Plant::class, 'plant_id');
+    }
 
     public function getSisaStokAttribute()
     {
         return ($this->total_masuk ?? 0) - ($this->total_keluar ?? 0);
     }
-
-
 }

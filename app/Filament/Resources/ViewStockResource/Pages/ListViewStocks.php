@@ -12,13 +12,11 @@ class ListViewStocks extends ListRecords
 
     public function getTableRecordKey($record): string
     {
-        return (string) $record->barang_id . '-' . $record->plant_id;
+        return (string) ($record->id ?? ($record->barang_id . '-' . $record->plant_id));
     }
 
     protected function getHeaderActions(): array
     {
-        return [
-            Actions\CreateAction::make(),
-        ];
+        return [];
     }
 }

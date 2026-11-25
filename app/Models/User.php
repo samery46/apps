@@ -69,10 +69,26 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
 
     public function canAccessPanel(Panel $panel): bool
     {
-        $allowedDomains = ['@club.co.id', '@aibm.co.id', '@gmail.com', '@indofood.co.id', '@ketikkan.com'];
+        // 1. Super Admin selalu memiliki hak akses
+        if ($this->hasRole('super_admin')) {
+            return true;
+        }
+
+        // 2. Daftar domain email yang diizinkan mengakses panel
+        $allowedDomains = [
+            '@club.co.id',
+            '@aibm.co.id',
+            '@gmail.com',
+            '@indofood.co.id',
+            '@ketikkan.com',
+            '@ketik-kan.site',
+            '@ketikkan.site',
+            '@ymail.com',                        
+            '@yahoo.co.id',            
+        ];
 
         foreach ($allowedDomains as $domain) {
-            if (str_ends_with($this->email, $domain)) {
+            if (str_ends_with(strtolower($this->email), strtolower($domain))) {
                 return true;
             }
         }
@@ -82,7 +98,15 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
 
     public function getFilamentAvatarUrl(): ?string
     {
-        return $this->avatar_url;
+        if (! $this->avatar_url) {
+            return null;
+        }
+
+        if (filter_var($this->avatar_url, FILTER_VALIDATE_URL)) {
+            return $this->avatar_url;
+        }
+
+        return Storage::disk('public')->url($this->avatar_url);
     }
 
     // Relasi many-to-many dengan Plant

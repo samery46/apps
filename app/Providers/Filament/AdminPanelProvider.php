@@ -95,7 +95,11 @@ class AdminPanelProvider extends PanelProvider
                     ->shouldShowDeleteAccountForm(true)
                     // ->shouldShowSanctumTokens()
                     // ->shouldShowBrowserSessionsForm()
-                    ->shouldShowAvatarForm()
+                    ->shouldShowAvatarForm(
+                        value: true,
+                        directory: 'avatars',
+                        rules: 'mimes:jpeg,png,jpg,webp|max:2048'
+                    )
             ]);
     }
 }

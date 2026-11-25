@@ -3,51 +3,64 @@
 namespace App\Exports;
 
 use App\Models\ViewStock;
-use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 
-class ViewStockExport implements FromCollection, WithMapping, WithHeadings
+class ViewStockExport implements FromCollection, WithMapping, WithHeadings, ShouldAutoSize
 {
-    protected array $recordPairs;
+    protected ?array $recordsOrIds;
     protected int $rowNumber = 0;
 
-    public function __construct(array $recordPairs)
+    /**
+     * @param array|null $recordsOrIds Jika null, akan mengekspor semua data stok
+     */
+    public function __construct(?array $recordsOrIds = null)
     {
-        $this->recordPairs = $recordPairs;
+        $this->recordsOrIds = $recordsOrIds;
     }
 
     public function collection()
     {
-        return collect($this->recordPairs)->map(function ($pair) {
-            return DB::table('view_stocks')
-                ->join('barangs', 'view_stocks.barang_id', '=', 'barangs.id')
-                ->join('plants', 'view_stocks.plant_id', '=', 'plants.id')
-                ->select(
-                    'barangs.nama as barang_nama',
-                    'plants.nama as plant_nama',
-                    'view_stocks.total_masuk',
-                    'view_stocks.total_keluar',
-                    DB::raw('(view_stocks.total_masuk - view_stocks.total_keluar) as stok_akhir')
-                )
-                ->where('view_stocks.barang_id', $pair['barang_id'])
-                ->where('view_stocks.plant_id', $pair['plant_id'])
-                ->first();
-        })->filter(); // Hindari null jika data tidak ditemukan
+        $query = ViewStock::with(['barang', 'plant']);
+
+        if (! empty($this->recordsOrIds)) {
+            $first = reset($this->recordsOrIds);
+            if (is_array($first) && isset($first['barang_id'])) {
+                $query->where(function ($q) {
+                    foreach ($this->recordsOrIds as $pair) {
+                        $q->orWhere(function ($sub) use ($pair) {
+                            $sub->where('barang_id', $pair['barang_id'])
+                                ->where('plant_id', $pair['plant_id']);
+                        });
+                    }
+                });
+            } else {
+                $query->whereIn('id', $this->recordsOrIds);
+            }
+        }
+
+        return $query->get();
     }
 
     public function map($row): array
     {
         $this->rowNumber++;
 
+        $totalMasuk = (int) ($row->total_masuk ?? 0);
+        $totalKeluar = (int) ($row->total_keluar ?? 0);
+        $sisaStok = $totalMasuk - $totalKeluar;
+
         return [
             $this->rowNumber,
-            $row->barang_nama,
-            $row->plant_nama,
-            $row->total_masuk,
-            $row->total_keluar,
-            $row->stok_akhir,
+            $row->plant?->kode ?? '-',
+            $row->plant?->nama ?? '-',
+            $row->barang?->kode ?? '-',
+            $row->barang?->nama ?? '-',
+            $totalMasuk,
+            $totalKeluar,
+            $sisaStok,
         ];
     }
 
@@ -55,12 +68,13 @@ class ViewStockExport implements FromCollection, WithMapping, WithHeadings
     {
         return [
             'No.',
-            'Nama Barang',
+            'Kode Plant',
             'Nama Plant',
+            'Kode Barang',
+            'Nama Barang',
             'Total Masuk',
             'Total Keluar',
-            'Stok Akhir',
+            'Sisa Stok',
         ];
     }
 }
-
